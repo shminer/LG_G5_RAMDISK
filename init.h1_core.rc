@@ -336,8 +336,9 @@ on early-fs
 	ffu_update
 
 on post-fs
-# enable exfat feature
+# enable exfat feature, insmod ko if the modules exist
     insmod /system/lib/modules/exfat.ko
+    insmod /system/lib/modules/texfat.ko
 
 # Enable CC Audit for MDFPP [S]
 on property:vold.decrypt=trigger_restart_framework
