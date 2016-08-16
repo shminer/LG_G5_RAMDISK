@@ -1,0 +1,57 @@
+cat << CTAG
+{
+		name:JZ KERNEL PAGE,
+			elements:[
+				{ SPane:{
+					title:"Linux version  JZ kernel version `busybox expr substr $(cat /cur_ver) 1 1`.`busybox expr substr  $(cat /cur_ver) 2 1`",
+					description:"`$BB cat /proc/version`"
+				}},
+				{ SPane:{
+					title:"Donate to me",
+					description:"<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VYRQCJCXTS4JC'>Donating via PayPal</a>"
+				}},
+				{ SPane:{
+					title:"Mode switch",
+					description:"This option provides several preset profiles, click the button below to switch."
+				}},				
+				{ STitleBar:{
+					title:,
+				}},
+				{ SDescription:{
+					description:"Low temp,very friendly for battery.",
+				}},
+				{ SButton:{
+					label:"ultra power save mode",
+					action:"mode Ulow"
+				}},
+				{ SDescription:{
+					description:"Close to stock,but better then stock.",
+				}},
+				{ SButton:{
+					label:"power save mode",
+					action:"mode low"
+				}},
+				{ SDescription:{
+					description:"Default JZ kernel setting.",
+				}},
+				{ SButton:{
+					label:"banlance mode",
+					action:"mode ban"
+				}},
+				{ SDescription:{
+					description:"Maybe hot is use,not friendly for battery.",
+				}},
+				{ SButton:{
+					label:"performance mode",
+					action:"mode high"
+				}},
+				{ SDescription:{
+					description:"Very hot is use,very not friendly for battery, but good for games or the bencmark",
+				}},
+				{ SButton:{
+					label:"ultra performance mode",
+					action:"mode Uhigh"
+				}},
+			]
+}
+CTAG

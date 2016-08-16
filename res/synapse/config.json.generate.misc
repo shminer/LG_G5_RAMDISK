@@ -1,0 +1,65 @@
+cat << CTAG
+{
+    name:MISC,
+		elements:[
+		{ STitleBar:{
+			title:"TCP Congestion Control"
+		}},
+			{ SOptionList:{
+				description:"Set the algorithm of internet congestion avoidance, to possibly improve speeds and load times. More info: <a href='https://en.wikipedia.org/wiki/TCP_congestion-avoidance_algorithm'>HERE</a>",
+				default:`$BB cat \`sh $DEVICE DirTCPCongestion\``,
+				action:"generic `sh $DEVICE DirTCPCongestion`",
+				values:[
+					`sh $DEVICE TCPCongestionList`
+				]
+			}},
+			{ STitleBar:{
+				title:"Sharpen control"
+			}},
+			{ SSeekBar:{
+					title:"Sharpen value control",
+					description:"Realtime shapen control.",
+					unit:" LV",
+					min:0,
+					max:99,
+					step:1,
+					default:`$BB cat /sys/devices/virtual/panel/img_tune/sharpness`,
+					action:"sharpening_ctl /sys/devices/virtual/panel/img_tune/sharpness"
+			}},
+			{ STitleBar:{
+				title:"wireless ADB",
+			}},
+			{ SLiveLabel:{
+				title: "type “adb connect <IP>” to connect adb",
+				refresh:800,
+				action:"adb get_ip"
+			}},
+			{ SButton:{
+				label:"Turn on",
+				action:"adb turnon"
+			}},
+			{ SButton:{
+				label:"Turn off",
+				action:"adb turnoff"
+			}},
+			
+			{ STitleBar:{
+				title:"Other setting"
+			}},
+			{ SDescription:{
+				description:"Clean WIFI DHCP IP Lease. Sometimes when connecting using WiFi, DHCP method will failure on Android WiFi (stuck on obtaining IP address). This option will clean the lease!",
+			}},
+			{ SButton:{
+				label:"Clean WIFI lease",
+				action:"fixdhcp"
+			}},
+			{ SDescription:{
+				description:"Reset the Battery Fuel Counter. If you suspect that Battery Counter is not showing the correct state, ask kernel for recalibration. It can't extend battery life but prevents wrong calculation of reaming energy.",
+			}},
+			{ SButton:{
+				label:"Reset battery counter",
+				action:"fixbattery"
+			}},
+		]
+}
+CTAG

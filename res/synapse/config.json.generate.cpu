@@ -1,0 +1,119 @@
+cat << CTAG
+{
+		name:CPU,
+			elements:[
+					{ SPane:{
+						title:"Scaling Frequencie:"
+					}},
+					{ SLiveLabel:{
+						refresh:1000,
+						action:"live CPU_CUR_Freq"
+					}},
+					{ STitleBar:{
+						title:"Frequency Control"
+					}},
+					`if [ -f "/sys/kernel/msm_limiter/resume_max_freq_c0" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"Cluster0 Max Frequency",
+							description:"Set the maximum frequency the CPU scales up to.",
+							default:'\`$BB cat /sys/kernel/msm_limiter/resume_max_freq_c0\`',
+							action:"generic /sys/kernel/msm_limiter/resume_max_freq_c0",
+							values:{'
+								sh $DEVICE C0FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/kernel/msm_limiter/resume_max_freq_c1" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"Cluster1 Max Frequency",
+							description:"Set the maximum frequency the CPU scales up to.",
+							default:'\`$BB cat /sys/kernel/msm_limiter/resume_max_freq_c1\`',
+							action:"generic /sys/kernel/msm_limiter/resume_max_freq_c1",
+							values:{'
+								sh $DEVICE C1FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/kernel/msm_limiter/suspend_min_freq_c0" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"CPU0 Min Frequency",
+							description:"Set the minimum frequency the CPU scales up to.",
+							default:'\`$BB cat /sys/kernel/msm_limiter/suspend_min_freq_c0\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq_c0",
+							values:{'
+								sh $DEVICE C0FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/kernel/msm_limiter/suspend_min_freq_c1" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"CPU0 Min Frequency",
+							description:"Set the minimum frequency the CPU scales up to.",
+							default:'\`$BB cat /sys/kernel/msm_limiter/suspend_min_freq_c1\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_min_freq_c1",
+							values:{'
+								sh $DEVICE C1FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/kernel/msm_limiter/suspend_max_freq_c0" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"CPU Suspend Max Frequency",
+							description:"Set the maximum frequency the CPU scales up to on suspend.",
+							default:'\`$BB cat /sys/kernel/msm_limiter/suspend_max_freq_c0\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_max_freq_c0",
+							values:{'
+								sh $DEVICE C0FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/kernel/msm_limiter/suspend_max_freq_c1" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"CPU Suspend Max Frequency",
+							description:"Set the maximum frequency the CPU scales up to on suspend.",
+							default:'\`$BB cat /sys/kernel/msm_limiter/suspend_max_freq_c1\`',
+							action:"generic /sys/kernel/msm_limiter/suspend_max_freq_c1",
+							values:{'
+								sh $DEVICE C1FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+			`if [ -f "/sys/module/workqueue/parameters/power_efficient" ]; then
+				PE=\`bool /sys/module/workqueue/parameters/power_efficient\`
+					$BB echo '{ SPane:{
+						title:"Power-efficient Workqueues",
+					}},
+						{ SCheckBox:{
+							label:"Enable",
+							description:"Power-efficient Workqueues help to reduce power consumption at the cost of slight performance decrease. By enabling this, PE Workqueues are used for unbound scheduled works to reduce the load on sibling CPU cores and queuing work only on CPU0.(JZ note: For all the kernel Workqueues)",
+							default:'$PE',
+							action:"boolean /sys/module/workqueue/parameters/power_efficient",
+						}},'
+			fi`
+			{ SPane:{
+				title:"CPU Governor",
+				description:"The CPU governor determines how the respective CPU behaves in response to changes in workload. Changing the governor will impact how the CPU scales through the frequency steps available. WIKI: <a href='http://timos.me/tm/wiki/cpugovernors'>HERE</a>"
+			}},
+				`if [ -f "/sys/kernel/msm_limiter/scaling_governor_c0" ]; then
+					$BB echo '{ SOptionList:{
+						title:"CPU Governor",
+						default:'\`$BB cat /sys/kernel/msm_limiter/scaling_governor_c0\`',
+						action:"generic /sys/kernel/msm_limiter/scaling_governor_c0",
+						values:['
+							sh $DEVICE C0GovernorList
+						$BB echo '],
+					}},'
+				fi`
+				`if [ -f "/sys/kernel/msm_limiter/scaling_governor_c1" ]; then
+					$BB echo '{ SOptionList:{
+						title:"CPU Governor",
+						default:'\`$BB cat /sys/kernel/msm_limiter/scaling_governor_c1\`',
+						action:"generic /sys/kernel/msm_limiter/scaling_governor_c1",
+						values:['
+							sh $DEVICE C1GovernorList
+						$BB echo '],
+					}},'
+				fi`
+		]
+}
+CTAG

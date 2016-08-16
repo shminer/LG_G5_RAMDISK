@@ -1,0 +1,84 @@
+cat << CTAG
+{
+		name:L2 AND BUS,
+			elements:[
+					{ SPane:{
+							title:"Current state:"
+						}},
+					{ SLiveLabel:{
+						refresh:1000,
+						action:"live CUR_l2_bw_freq"
+					}},
+					{ STitleBar:{
+						title:"Frequency Contorl"
+					}},
+					`if [ -f "/sys/class/devfreq/qcom,cpubw.35/max_freq" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"Max bus BW",
+							default:'\`$BB cat /sys/class/devfreq/qcom,cpubw.35/max_freq\`',
+							action:"generic /sys/class/devfreq/qcom,cpubw.35/max_freq",
+							values:{'
+								sh $DEVICE BWFrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/class/devfreq/qcom,cpubw.35/min_freq" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"Min bus BW",
+							default:'\`$BB cat /sys/class/devfreq/qcom,cpubw.35/min_freq\`',
+							action:"generic /sys/class/devfreq/qcom,cpubw.35/min_freq",
+							values:{'
+								sh $DEVICE BWFrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/class/devfreq/qcom,cache.34/max_freq" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"Max CPU L2 frequency",
+							default:'\`$BB cat /sys/class/devfreq/qcom,cache.34/max_freq\`',
+							action:"generic /sys/class/devfreq/qcom,cache.34/max_freq",
+							values:{'
+								sh $DEVICE L2FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/class/devfreq/qcom,cache.34/min_freq" ]; then
+						$BB echo '{ SSeekBar:{
+							title:"Min CPU L2 frequency",
+							default:'\`$BB cat /sys/class/devfreq/qcom,cache.34/min_freq\`',
+							action:"generic /sys/class/devfreq/qcom,cache.34/min_freq",
+							values:{'
+								sh $DEVICE L2FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					{ STitleBar:{
+						title:"Governor tunables"
+					}},
+					{ SDescription:{
+						description:"Hwmon is a dynamic control drivers, based on devfreq, good for battery and performance. The frequency map according to cpufreq step, if the CPU work in low frequency, bus or l2 will work in low frequency too."
+					}},
+					`if [ -f "/sys/class/devfreq/qcom,cpubw.35/governor" ]; then
+						$BB echo '{ SOptionList:{
+							title:"Bus governor",
+							default:'\`$BB cat /sys/class/devfreq/qcom,cpubw.35/governor\`',
+							action:"generic /sys/class/devfreq/qcom,cpubw.35/governor",
+							values:{
+								cpubw_hwmon:"hwmon", cpufreq:"frequency map",
+								}
+						}},'
+					fi`
+					`if [ -f "/sys/class/devfreq/qcom,cache.34/governor" ]; then
+						$BB echo '{ SOptionList:{
+							title:"L2 governor",
+							default:'\`$BB cat /sys/class/devfreq/qcom,cache.34/governor\`',
+							action:"generic /sys/class/devfreq/qcom,cache.34/governor",
+							values:{
+								cache_hwmon:"hwmon", cpufreq:"frequency map",
+								}
+						}},'
+					fi`
+				
+		]
+}
+CTAG
