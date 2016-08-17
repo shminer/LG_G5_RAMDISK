@@ -23,24 +23,14 @@ cat << CTAG
 				action:"live DefaultCPUGovernor"
 			}},
 			{ SLiveLabel:{
-				title:"Current CPU hotplug",
-				refresh:8000,
-				action:"live CPU_HOTPLUG"
-			}},
-			{ SLiveLabel:{
 				title:"CPU temperature:",
 				refresh:3000,
 				action:"live CPUTemperature"
 			}},
 			{ SLiveLabel:{
-					title: "CPU Thermal status",
-					refresh:2000,
-					action:"live Thermalstats"
-			}},
-			{ SLiveLabel:{
-				title:"Battery temperature:",
+				title:"Battery States:",
 				refresh:3000,
-				action:"live BatteryTemperature"
+				action:"live LiveCharge_State"
 			}},
 			{ SLiveLabel:{
 				title:"Memory status:",

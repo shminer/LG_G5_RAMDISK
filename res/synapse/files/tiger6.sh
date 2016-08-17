@@ -57,28 +57,16 @@ case "$1" in
 		done;
 	;;
 	DefaultCPUFrequency)
-		CPU0_FREQMAX="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq` / 1000)MHz";
-		CPU0_FREQMIN="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq` / 1000)MHz";
-		echo "CPU Max frequency: $CPU0_FREQMAX@nCPU Min frequency: $CPU0_FREQMIN"
+		C0_FREQMAX="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq` / 1000)MHz";
+		C1_FREQMAX="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq` / 1000)MHz";
+		C0_FREQMIN="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq` / 1000)MHz";
+		C1_FREQMIN="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq` / 1000)MHz";
+		echo "LITTILE CORE: @nMAX: $C0_FREQMAX | MIN: $C1_FREQMIN @nBIG CORE: @nMAX: $C1_FREQMAX | MIN: $C1_FREQMIN"
 	;;
 	DefaultCPUCURFrequency)
-		CPU0_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` / 1000)MHz";
-		if [ -d /sys/devices/system/cpu/cpu1/cpufreq ];then
-			CPU1_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu1/cpufreq/scaling_cur_freq` / 1000)MHz";
-			else 
-			CPU1_FREQCUR=`echo "sleeping"`;
-		fi
-		if [ -d /sys/devices/system/cpu/cpu2/cpufreq ];then
-			CPU2_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq` / 1000)MHz";
-			else 
-			CPU2_FREQCUR=`echo "sleeping"`;
-		fi
-		if [ -d /sys/devices/system/cpu/cpu3/cpufreq ];then
-			CPU3_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu3/cpufreq/scaling_cur_freq` / 1000)MHz";
-			else 
-			CPU3_FREQCUR=`echo "sleeping"`;
-		fi
-		$BB echo "CPU Core0: ${CPU0_FREQCUR}@nCPU Core1: ${CPU1_FREQCUR}@nCPU Core2: ${CPU2_FREQCUR}@nCPU Core3: ${CPU3_FREQCUR}";
+		C0_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` / 1000)MHz";
+		C1_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq` / 1000)MHz";
+		$BB echo "LITTILE CORE: @n${C0_FREQCUR}@nBIG CORE: MAX: @n${C1_FREQCUR}";
 	;;
 	LiveThermalstats)
 		Thermal=/sys/module/msm_thermal/parameters;
@@ -201,9 +189,8 @@ case "$1" in
 		$BB echo "$CPUBWFREQ";
 	;;
 	LiveCPUTemperature)
-		CPU_C=`$BB cat /sys/class/thermal/thermal_zone5/temp`;
-		CPU_F=`$BB awk "BEGIN { print ( ($CPU_C * 1.8) + 32 ) }"`;
-
+		CPU_C=`$BB awk '{ print $1 / 10 }' /sys/class/thermal/thermal_zone11/temp`;
+		CPU_F=`$BB awk "BEGIN { print ( ( ($CPU_C * 1.8) + 32) ) }"`;
 		$BB echo "$CPU_C°C";
 	;;
 	LiveSOCTemperature)
@@ -213,7 +200,7 @@ case "$1" in
 		$BB echo "$SOC_C°C";
 	;;
 	LiveGPUFrequency)
-		GPUFREQ="$((`$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/gpuclk` / 1000000)) MHz";
+		GPUFREQ="$((`$BB cat /sys/devices/*00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/gpuclk` / 1000000)) MHz";
 		$BB echo "$GPUFREQ";
 	;;
 	LiveMemory)
@@ -359,8 +346,9 @@ case "$1" in
 		done;
 	;;
 	LiveDefaultCPUGovernor)
-		cpugov_show=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor);
-		echo "$cpugov_show";
+		c0gov=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor);
+		c1gov=$(cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor);
+		echo "LITTILE CORE: $c0gov@nBIG CORE: $c1gov";
 	;;
 	LiveCPU_HOTPLUG)
 		if [ "$(cat /sys/kernel/alucard_hotplug/hotplug_enable)" -eq "1" ]; then
@@ -378,5 +366,13 @@ case "$1" in
 	LivePVSbin)
 		pvs_bin=`$BB cat /sys/devices/soc0/pvs_bin`;
 	$BB echo "PVS:${pvs_bin}";
+	;;
+	Charge_State)
+		ibat_limit=`$BB cat /sys/module/lge_charging_controller/parameters/lgcc_ibat_limit`;
+		CFD="$((`$BB cat /sys/class/power_supply/bms/charge_full_design` / 1000)) MAh";
+		CNR="$((`$BB cat /sys/class/power_supply/bms/charge_now_raw` / 1000)) MAh";
+		CN="$((`$BB cat /sys/class/power_supply/bms/current_now` / -1000)) ma";
+		BAT_C=`$BB awk '{ print $1 / 10 }' /sys/class/power_supply/battery/temp`;
+	$BB echo "Battery current/Charge limit: @n${CN} / ${ibat_limit} ma @nBattery capacity: @n${CNR} / ${CFD}@nTEMP: ${BAT_C}°C";
 	;;
 esac;
