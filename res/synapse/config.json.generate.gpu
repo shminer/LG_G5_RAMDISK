@@ -20,10 +20,23 @@ cat << CTAG
 						default:'\`$BB cat $GPUMAX\`',
 						action:"generic '$GPUMAX'",
 						values:{
-								0:"683Mhz",1:"600Mhz",2:"550Mhz",
-								3:"500Mhz",4:"389Mhz",5:"300Mhz",
-								6:"240Mhz",7:"100Mhz"
+								0:"624Mhz",1:"560Mhz",2:"510Mhz",
+								3:"401Mhz",4:"315Mhz",5:"214Mhz",
+								6:"133Mhz"
 						}
+				}},'
+			fi`
+			`if [ -f "/sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost" ]; then
+				ADB=\`$BB cat /sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost\`
+					$BB echo '{ SSeekBar:{
+						title:"Adrenoboost",
+						description:"A simple idea to improve the adreno tz governor, thanks @flar2 and @tbalden .",
+						unit:" LV",
+						min:0,
+						max:3,
+						step:1,
+						default:'\`$BB echo $ADB\`',
+						action:"generic /sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost",
 				}},'
 			fi`
 			`if [ -f "\`sh $DEVICE DirGPUGovernor\`" ]; then

@@ -106,7 +106,7 @@ case "$1" in
 		$BB echo "${THSS}@n${Thermalstats}${UTS}";
 	;;
 	DefaultGPUGovernor)
-		$BB echo "`$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/governor`"
+		$BB echo "`$BB cat /sys/class/devfreq/*00000.qcom,kgsl-3d0/governor`"
 	;;
 	DirKernelIMG)
 		$BB echo "/dev/block/platform/msm_sdcc.1/by-name/boot";
@@ -124,7 +124,7 @@ case "$1" in
 		$BB echo "/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq";
 	;;
 	DirGPUGovernor)
-		$BB echo "/sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/governor";
+		$BB echo "/sys/class/devfreq/b00000.qcom,kgsl-3d0/governor";
 	;;
 	DirGPUMaxFrequency)
 		$BB echo "/sys/class/kgsl/kgsl-3d0/max_pwrlevel";
@@ -148,18 +148,18 @@ case "$1" in
 		$BB echo "/proc/sys/net/ipv4/tcp_congestion_control";
 	;;
 	GPUFrequencyList)
-		for GPUFREQ in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/available_frequencies` ; do
+		for GPUFREQ in `$BB cat /sys/class/devfreq/*00000.qcom,kgsl-3d0/available_frequencies` ; do
 		LABEL=$((GPUFREQ / 1000000));
 			$BB echo "$GPUFREQ:\"${LABEL} MHz\", ";
 		done;
 	;;
 	GPUGovernorList)
-		for GPUGOV in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/available_governors`; do
+		for GPUGOV in `$BB cat /sys/class/devfreq/*00000.qcom,kgsl-3d0/available_governors`; do
 			$BB echo "\"$GPUGOV\",";
 		done;
 	;;
 	GPUPowerLevel)
-		for GPUFREQ in `$BB cat /sys/devices/fdb00000.qcom,kgsl-3d0/devfreq/fdb00000.qcom,kgsl-3d0/available_frequencies` ; do
+		for GPUFREQ in `$BB cat /sys/class/devfreq/*00000.qcom,kgsl-3d0/available_frequencies` ; do
 		LABEL=$((GPUFREQ / 1000000));
 			$BB echo "$GPUFREQ:\"${LABEL} MHz\", ";
 		done;
@@ -200,7 +200,7 @@ case "$1" in
 		$BB echo "$SOC_C°C";
 	;;
 	LiveGPUFrequency)
-		GPUFREQ="$((`$BB cat /sys/devices/*00000.qcom,kgsl-3d0/kgsl/kgsl-3d0/gpuclk` / 1000000)) MHz";
+		GPUFREQ="$((`$BB cat /sys/class/kgsl/kgsl-3d0/gpuclk` / 1000000)) MHz";
 		$BB echo "$GPUFREQ";
 	;;
 	LiveMemory)
