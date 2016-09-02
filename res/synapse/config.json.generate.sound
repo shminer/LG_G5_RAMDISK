@@ -1,110 +1,43 @@
 cat << CTAG
 {
-	name:SOUND,
+	name:{en:"SOUND", zh_CN:"声音控制"},
 		elements:[
-			`if [ -d "/sys/kernel/sound_control_3" ]; then
-				$BB echo '{ SPane:{
-						title:"Sound Profiles",
-						description:"After you apply a profile, turn audio Off/On to update. Select custom profile if you set controls manually."
-					}},
-						{ SOptionList:{
-							default:Custom,
-							action:"soundfaux /res/synapse/files/sound_prof",
-							values:[ Custom, Stock, Quality, Loudness, Quiet,
-							],
-							notify:[
-								{
-									on:APPLY,
-									do:[ REFRESH, APPLY ],
-									to:[
-										"soundfaux /sys/kernel/sound_control_3/gpl_headphone_gain",'
-										[ "\`sh $DEVICE HasHeadphonePowerAmp\`" == "1" ] && $BB echo '"soundfaux /sys/kernel/sound_control_3/gpl_headphone_pa_gain",'
-										$BB echo '"soundfaux /sys/kernel/sound_control_3/gpl_mic_gain",
-										"soundfaux /sys/kernel/sound_control_3/gpl_cam_mic_gain"
-									]
-								}
-							]
-						}},
-					{ SPane:{
-						title:"Gain Controls",
-					}},
-						{ SSeekBar:{
-							title:"Headphone (Left & Right)",
-							min:-30,
-							max:15,
-							default:0,
-							action:"soundfaux /sys/kernel/sound_control_3/gpl_headphone_gain",
-						}},'
-						if [ "\`sh $DEVICE HasHeadphonePowerAmp\`" == "1" ]; then
-							$BB echo '{ SSeekBar:{
-								title:"Headphone PowerAmp (Left & Right)",
-								min:-6,
-								max:6,
-								default:0,
-								action:"soundfaux /sys/kernel/sound_control_3/gpl_headphone_pa_gain",
-							}},'
-						fi
-						$BB echo '{ SSeekBar:{
-							title:"Handset Microphone",
-							min:-30,
-							max:15,
-							default:0,
-							action:"soundfaux /sys/kernel/sound_control_3/gpl_mic_gain",
-						}},
-						{ SSeekBar:{
-							title:"Camcorder Microphone",
-							min:-30,
-							max:15,
-							default:0,
-							action:"soundfaux /sys/kernel/sound_control_3/gpl_cam_mic_gain",
-						}},'
-			fi`
 			`[ -d "/sys/class/misc/soundcontrol" ] && SC=/sys/class/misc/soundcontrol;
 			[ -d "/sys/devices/virtual/misc/soundcontrol" ] && SC=/sys/devices/virtual/misc/soundcontrol;
-			
-			if [ -f "$SC/headset_boost" ]; then
-				HB=\`$BB cat $SC/headset_boost\`;
+			if [ -f "$SC/volume_boost" ]; then
 				MB=\`$BB cat $SC/mic_boost\`;
-				MG=\`$BB cat $SC/mic_gain\`;
 				SB=\`$BB cat $SC/speaker_boost\`;
 				VB=\`$BB cat $SC/volume_boost\`;
+				VB=\`$BB cat $SC/cam_mic_boost\`;
 				$BB echo '{ SPane:{
-					title:"Sound Control",
+					title:{en:"Sound Control", zh_CN:"声音控制"},
 				}},
 					{ SSeekBar:{
-						title:"Headset Boost",
-						min:-11,
-						max:15,
-						default:'$HB',
-						action:"generic '$SC'/headset_boost",
-					}},
-					{ SSeekBar:{
-						title:"Microphone Boost",
-						min:-11,
-						max:15,
+						title:{en:"Microphone Boost", zh_CN:"麦克风增益"},
+						min:-10,
+						max:10,
 						default:'$MB',
 						action:"generic '$SC'/mic_boost",
 					}},
 					{ SSeekBar:{
-						title:"Microphone Gain",
-						min:0,
+						title:{en:"Camera Microphone Boost", zh_CN:"相机麦克风增益"},
+						min:-10,
 						max:10,
-						default:'$MG',
-						action:"generic '$SC'/mic_gain",
+						default:'$MB',
+						action:"generic '$SC'/cam_mic_boost",
 					}},
 					{ SSeekBar:{
-						title:"Speaker Boost",
-						min:-11,
-						max:15,
+						title:{en:"Speaker Boost", zh_CN:"外放增益"},
+						min:-10,
+						max:10,
 						default:'$SB',
 						action:"generic '$SC'/speaker_boost",
 					}},
 					{ SSeekBar:{
-						title:"Volume Boost",
-						min:0,
+						title:{en:"Headphones Boost", zh_CN:"耳机增益"},
+						min:-20,
 						max:20,
-						default:'$VB',
-						action:"generic '$SC'/volume_boost",
+						action:"soundcontrol '$SC'/volume_boost",
 					}},'
 				if [ -f "$SC/highperf_enabled" ]; then
 				HPE=\`$BB cat $SC/highperf_enabled\`;

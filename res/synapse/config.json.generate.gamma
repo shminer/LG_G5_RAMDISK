@@ -1,16 +1,16 @@
 cat << CTAG
 {
-	name:GAMMA,
+	name:{en:"GAMMA", zh_CN:"屏幕色彩控制"},
 		elements:[
 			`if [ -d "/sys/devices/platform/kcal_ctrl.0" ]; then
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_enable" ]; then
 				KCALE=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_enable\`;
 					$BB echo '{ SPane:{
-						title:"KCAL - Advanced Color Control",
+						title:{en:"KCAL - Advanced Color Control", zh_CN:"高级色彩控制"}.
 					}},
 						{ SCheckBox:{
-							label:"Enable KCAL Tuning",
-							description:"Below tuning will be applied only with this toggle enabled.",
+							label:{en:"Enable KCAL Tuning", zh_CN:"色彩控制全局开关"},
+							description:{en:"Below tuning will be applied only with this toggle enabled.", zh_CN:"以下调整仅在开关开启时生效."},
 							default:'$KCALE',
 							action:"gamma /sys/devices/platform/kcal_ctrl.0/kcal_enable",
 						}},'
@@ -21,8 +21,8 @@ cat << CTAG
 						title:"Values",
 					}},
 						{ SGeneric:{
-							title:"RGB Tuning",
-							description:"Here you can set the values of RGB channel. range 0-256",
+							title:{en:"RGB Tuning", zh_CN:"三原色调整"},
+							description:{en:"Here you can set the values of RGB channel. range 0-256", zh_CN:"此设置影响整体屏幕色彩，以下分别为红、绿、蓝三个颜色数值，范围0-256"},
 							default:'$KCAL',
 							action:"gamma /sys/devices/platform/kcal_ctrl.0/kcal",
 						}},'
@@ -30,7 +30,7 @@ cat << CTAG
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_invert" ]; then
 				KCALINV=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_invert\`;
 					$BB echo '{ SCheckBox:{
-						label:"Display Inversion Mode",
+						label:{en:"Display Inversion Mode", zh_CN:"反色"},
 						default:'$KCALINV',
 						action:"gamma /sys/devices/platform/kcal_ctrl.0/kcal_invert"
 					}},'
@@ -38,8 +38,7 @@ cat << CTAG
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_min" ]; then
 				KM=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_min\`
 						$BB echo '{ SSeekBar:{
-							title:"Minimum RGB Multiplier value",
-							min:0,
+							title:{en:"Minimum RGB Multiplier value", zh_CN:"三原色最小值"},							min:0,
 							max:256,
 							step:1,
 							default:'$KM',
@@ -49,7 +48,7 @@ cat << CTAG
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_cont" ]; then
 				KCALCONT=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_cont\`;
 					$BB echo '{ SSeekBar:{
-						title:"Display Contrast value",
+						title:{en:"Display Contrast value", zh_CN:"对比度设置"},
 						min:128,
 						max:383,
 						step:1,
@@ -60,7 +59,7 @@ cat << CTAG
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_hue" ]; then
 				KCALHUE=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_hue\`;
 					$BB echo '{ SSeekBar:{
-						title:"Display Hue value",
+						title:{en:"Display Hue value", zh_CN:"色相/色调"},
 						min:0,
 						max:1536,
 						step:1,
@@ -71,7 +70,7 @@ cat << CTAG
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_sat" ]; then
 				KCALSAT=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_sat\`;
 					$BB echo '{ SSeekBar:{
-						title:"Saturation Intensity value",
+						title:{en:"Saturation Intensity value", zh_CN:"饱和度"},
 						min:229,
 						max:383,
 						step:1,
@@ -82,7 +81,7 @@ cat << CTAG
 				if [ -f "/sys/devices/platform/kcal_ctrl.0/kcal_val" ]; then
 				KCALVAL=\`$BB cat /sys/devices/platform/kcal_ctrl.0/kcal_val\`;
 					$BB echo '{ SSeekBar:{
-						title:"Display gamma value",
+						title:{en:"Display gamma value", zh_CN:"明度"},
 						min:128,
 						max:383,
 						step:1,

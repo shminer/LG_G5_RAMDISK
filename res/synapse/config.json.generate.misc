@@ -1,12 +1,12 @@
 cat << CTAG
 {
-    name:MISC,
+    name:{en:"MISC", zh_CN:"附加设置"},
 		elements:[
 		{ STitleBar:{
-			title:"TCP Congestion Control"
+			title:{en:"TCP Congestion Control", zh_CN:"TCP 拥塞控制"},
 		}},
 			{ SOptionList:{
-				description:"Set the algorithm of internet congestion avoidance, to possibly improve speeds and load times. More info: <a href='https://en.wikipedia.org/wiki/TCP_congestion-avoidance_algorithm'>HERE</a>",
+				description:{en:"Set the algorithm of internet congestion avoidance, to possibly improve speeds and load times. More info: <a href='https://en.wikipedia.org/wiki/TCP_congestion-avoidance_algorithm'>HERE</a>", zh_CN:"设置 TCP 拥塞避免算法，可改善网络连接的速度和加载时间。更多信息请点击： <a href='https://en.wikipedia.org/wiki/TCP_congestion-avoidance_algorithm'>HERE</a>"},
 				default:`$BB cat \`sh $DEVICE DirTCPCongestion\``,
 				action:"generic `sh $DEVICE DirTCPCongestion`",
 				values:[
@@ -14,11 +14,11 @@ cat << CTAG
 				]
 			}},
 			{ STitleBar:{
-				title:"Sharpen control"
+				title:"Sharpen control",
 			}},
 			{ SSeekBar:{
-					title:"Sharpen value control",
-					description:"Realtime shapen control.",
+					title:{en:"Sharpen value control", zh_CN:"屏幕锐化调整"},
+					description:{en:"Realtime shapen control.", zh_CN:"锐化值调整，数字越小锐化程度越小，数字越大锐化程度越大."},
 					unit:" LV",
 					min:0,
 					max:99,
@@ -27,37 +27,37 @@ cat << CTAG
 					action:"sharpening_ctl /sys/devices/virtual/panel/img_tune/sharpness"
 			}},
 			{ STitleBar:{
-				title:"wireless ADB",
+				title:{en:"wireless ADB", zh_CN:"无线ADB"},
 			}},
 			{ SLiveLabel:{
-				title: "type “adb connect <IP>” to connect adb",
+				title:{en:"type “adb connect <IP>” to connect adb", zh_CN:"输入“adb connect <IP地址>”即可连接"},
 				refresh:800,
 				action:"adb get_ip"
 			}},
 			{ SButton:{
-				label:"Turn on",
+				label:{en:"Turn on", zh_CN:"打开无线adb"},
 				action:"adb turnon"
 			}},
 			{ SButton:{
-				label:"Turn off",
+				label:{en:"Turn off", zh_CN:"关闭无线adb"},
 				action:"adb turnoff"
 			}},
 			
 			{ STitleBar:{
-				title:"Other setting"
+				title:{en:"Other setting", zh_CN:"其他设置"},
 			}},
 			{ SDescription:{
-				description:"Clean WIFI DHCP IP Lease. Sometimes when connecting using WiFi, DHCP method will failure on Android WiFi (stuck on obtaining IP address). This option will clean the lease!",
+				description:{en:"Clean WIFI DHCP IP Lease. Sometimes when connecting using WiFi, DHCP method will failure on Android WiFi (stuck on obtaining IP address). This option will clean the lease!", zh_CN:"如果你发现某些热点连接不上或者正在获取地址，可以尝试此按钮."},
 			}},
 			{ SButton:{
-				label:"Clean WIFI lease",
+				label:{en:"Clean WIFI lease", zh_CN:"DHCP修复"},
 				action:"fixdhcp"
 			}},
 			{ SDescription:{
-				description:"Reset the Battery Fuel Counter. If you suspect that Battery Counter is not showing the correct state, ask kernel for recalibration. It can't extend battery life but prevents wrong calculation of reaming energy.",
+				description:{en:"Reset the Battery Fuel Counter. If you suspect that Battery Counter is not showing the correct state, ask kernel for recalibration. It can't extend battery life but prevents wrong calculation of reaming energy.", zh_CN:"当你发现电池百分比计数不正确时，可以按此按钮修复."},
 			}},
 			{ SButton:{
-				label:"Reset battery counter",
+				label:{en:"Reset battery counter", zh_CN:"电池计数重置"},
 				action:"fixbattery"
 			}},
 		]
