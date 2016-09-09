@@ -53,6 +53,10 @@ cat << CTAG
 				label:{en:"Clean WIFI lease", zh_CN:"DHCP修复"},
 				action:"fixdhcp"
 			}},
+			{ SButton:{
+				label:{en:"Logcat switcher", zh_CN:"Logcat服务开关"},
+				action:"logcat_switch"
+			}},
 			{ SDescription:{
 				description:{en:"Reset the Battery Fuel Counter. If you suspect that Battery Counter is not showing the correct state, ask kernel for recalibration. It can't extend battery life but prevents wrong calculation of reaming energy.", zh_CN:"当你发现电池百分比计数不正确时，可以按此按钮修复."},
 			}},
