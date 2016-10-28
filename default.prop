@@ -3,9 +3,9 @@
 #
 ro.secure=1
 ro.allow.mock.location=0
-ro.debuggable=1
-persist.sys.usb.config=boot,adb
-persist.sys.usb.diag_enable=1
+ro.debuggable=0
+persist.sys.usb.config=boot
+ro.adb.secure=1
 ro.lge.fmframework.enabled=true
 ro.zygote=zygote64_32
 dalvik.vm.image-dex2oat-Xms=64m
