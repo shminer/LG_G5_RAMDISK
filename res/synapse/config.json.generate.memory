@@ -166,16 +166,18 @@ cat << CTAG
 					default:`$BB cat /proc/sys/vm/vfs_cache_pressure`,
 					action:"generic /proc/sys/vm/vfs_cache_pressure"
 				}},
+			`if [ -f "/sys/module/lowmemorykiller/parameters/enable_adaptive_lmk" ]; then
+				{ SCheckBox:{
+						label:{en:"Adaptive LMK", zh_CN:"自适应低内存管理"},
+						description:{en:"Adaptive LMK prevents sluggishness and provides very low app launch latency by improving LMK routines.", zh_CN:"自适应LMK功能可以优先防止延迟，加强LMK执行时的效率."},
+						default:1,
+						action:"generic /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk"
+				}},
+			fi`
 			`if [ -f "/sys/module/lowmemorykiller/parameters/minfree" ]; then
 				$BB echo '{ SPane:{
 					title:{en:"Low Memory Killer", zh_CN:"LMK低内存清理"},
 					description:{en:"LMK Minfree controls how much memory each app type can hold, and is responsible for memory management for multitasking.", ch_CN:"LMK Minfree 控制每个app可以占用多少内存，并负责多任务内存管理."},
-				}},
-				{ SCheckBox:{
-					label:{en:"Adaptive LMK", zh_CN:"自适应低内存管理"},
-					description:{en:"Adaptive LMK prevents sluggishness and provides very low app launch latency by improving LMK routines.", zh_CN:"自适应LMK功能可以优先防止延迟，加强LMK执行时的效率."},
-					default:1,
-					action:"generic /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk"
 				}},'
 					for LMK in 1 2 3 4 5 6; do
 						$BB echo '{ SSeekBar:{ '
