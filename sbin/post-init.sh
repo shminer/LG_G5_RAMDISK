@@ -40,6 +40,23 @@ CRITICAL_PERM_FIX()
 }
 CRITICAL_PERM_FIX;
 
+# adjust cpu gonvernor
+grep "alucard" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors > /dev/null
+if [ "$?" == 0 ];then
+	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	echo "alucard" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo "alucard" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	echo 55 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/dec_cpu_load
+	echo 50 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/dec_cpu_load_at_min_freq
+	echo 80 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/dec_cpu_load
+	echo 65 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/dec_cpu_load_at_min_freq
+	echo 45 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/inc_cpu_load
+	echo 40 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/inc_cpu_load_at_min_freq
+	echo 60 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/inc_cpu_load
+	echo 60 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/inc_cpu_load_at_min_freq
+fi
+
 #echo 120 > /sys/module/cpu_boost/parameters/boost_ms
 #echo 1497600 > /sys/module/cpu_boost/parameters/sync_threshold
 #echo 1497600 > /sys/module/cpu_boost/parameters/input_boost_freq
