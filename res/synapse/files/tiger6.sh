@@ -66,7 +66,7 @@ case "$1" in
 	DefaultCPUCURFrequency)
 		C0_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` / 1000)MHz";
 		C1_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_cur_freq` / 1000)MHz";
-		$BB echo "LITTILE CORE: @n${C0_FREQCUR}@nBIG CORE: MAX: @n${C1_FREQCUR}";
+		$BB echo "LITTILE CORE: @n${C0_FREQCUR}@nBIG CORE: @n${C1_FREQCUR}";
 	;;
 	LiveThermalstats)
 		Thermal=/sys/module/msm_thermal/parameters;

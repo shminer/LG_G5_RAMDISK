@@ -29,7 +29,7 @@ cat << CTAG
 			`if [ -f "/sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost" ]; then
 				ADB=\`$BB cat /sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost\`
 					$BB echo '{ SSeekBar:{
-						title:{en:"Adrenoboost", zh_CN:"GUP加速"},
+						title:{en:"Adrenoboost", zh_CN:"GPU加速"},
 						description:{en:"A simple idea to improve the adreno tz governor, thanks @flar2 and @tbalden .", zh_CN:"gpu调速器加速惰性，越小频率提升越慢，越大频率提升越快，感谢@flar2和@tbalden提供代码."},
 						min:0,
 						max:3,
