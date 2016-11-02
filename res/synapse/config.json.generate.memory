@@ -167,12 +167,12 @@ cat << CTAG
 					action:"generic /proc/sys/vm/vfs_cache_pressure"
 				}},
 			`if [ -f "/sys/module/lowmemorykiller/parameters/enable_adaptive_lmk" ]; then
-				{ SCheckBox:{
+				$BB echo '{ SCheckBox:{
 						label:{en:"Adaptive LMK", zh_CN:"自适应低内存管理"},
 						description:{en:"Adaptive LMK prevents sluggishness and provides very low app launch latency by improving LMK routines.", zh_CN:"自适应LMK功能可以优先防止延迟，加强LMK执行时的效率."},
 						default:1,
 						action:"generic /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk"
-				}},
+				}},'
 			fi`
 			`if [ -f "/sys/module/lowmemorykiller/parameters/minfree" ]; then
 				$BB echo '{ SPane:{
