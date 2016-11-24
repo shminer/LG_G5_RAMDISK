@@ -40,27 +40,54 @@ CRITICAL_PERM_FIX()
 }
 CRITICAL_PERM_FIX;
 
-# adjust cpu gonvernor
+# Adjust for alucard cpu gonvernor(default gonvernor)
+# e.g. wr_alu_cpufreq argv1 argv2 argv3
+wr_alu_cpufreq()
+{
+	echo ${3} > /sys/devices/system/cpu/cpu${1}/cpufreq/alucard/${2}
+}
 grep "alucard" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors > /dev/null
 if [ "$?" == 0 ];then
 	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	echo "alucard" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "alucard" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
-	echo 55 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/dec_cpu_load
-	echo 50 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/dec_cpu_load_at_min_freq
-	echo 80 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/dec_cpu_load
-	echo 65 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/dec_cpu_load_at_min_freq
-	echo 45 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/inc_cpu_load
-	echo 40 > /sys/devices/system/cpu/cpu0/cpufreq/alucard/inc_cpu_load_at_min_freq
-	echo 60 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/inc_cpu_load
-	echo 60 > /sys/devices/system/cpu/cpu2/cpufreq/alucard/inc_cpu_load_at_min_freq
+	wr_alu_cpufreq 0 freq_responsiveness 1324800
+	wr_alu_cpufreq 0 freq_responsiveness_max 1401600
+	wr_alu_cpufreq 0 cpus_up_rate_at_max_freq 1
+	wr_alu_cpufreq 0 cpus_up_rate 1
+	wr_alu_cpufreq 0 cpus_down_rate_at_max_freq 1
+	wr_alu_cpufreq 0 cpus_down_rate 2
+	wr_alu_cpufreq 0 pump_inc_step_at_min_freq 3
+	wr_alu_cpufreq 0 pump_inc_step 2
+	wr_alu_cpufreq 0 pump_dec_step_at_min_freq 1
+	wr_alu_cpufreq 0 pump_dec_step 2
+
+	wr_alu_cpufreq 2 freq_responsiveness 1248000
+	wr_alu_cpufreq 2 freq_responsiveness_max 1920000
+	wr_alu_cpufreq 2 cpus_up_rate_at_max_freq 2
+	wr_alu_cpufreq 2 cpus_up_rate 1
+	wr_alu_cpufreq 2 cpus_down_rate_at_max_freq 1
+	wr_alu_cpufreq 2 cpus_down_rate 1
+	wr_alu_cpufreq 2 pump_inc_step_at_min_freq 2
+	wr_alu_cpufreq 2 pump_inc_step 1
+	wr_alu_cpufreq 2 pump_dec_step_at_min_freq 1
+	wr_alu_cpufreq 2 pump_dec_step 2
 fi
 
-#echo 120 > /sys/module/cpu_boost/parameters/boost_ms
-#echo 1497600 > /sys/module/cpu_boost/parameters/sync_threshold
-#echo 1497600 > /sys/module/cpu_boost/parameters/input_boost_freq
-#echo 980 > /sys/module/cpu_boost/parameters/input_boost_ms
+# Kernel tweak
+echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
+echo "0" > /proc/sys/vm/panic_on_oom; # default: 0
+echo "5" > /proc/sys/kernel/panic; # default: 5
+echo "0" > /proc/sys/kernel/panic_on_oops; # default: 1
+echo "5" > /proc/sys/vm/dirty_background_ratio; # default: 5
+echo "20" > /proc/sys/vm/dirty_ratio; # default: 20
+echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
+echo "1" > /proc/sys/vm/overcommit_memory; # default: 1
+echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
+echo "0" > /proc/sys/vm/page-cluster; # default: 0
+# mem calc here in pages. so 16384 x 4 = 64MB reserved for fast access by kernel and VM
+echo "32768" > /proc/sys/vm/mmap_min_addr; #default: 32768
 
 # Permissions for LMK
 chmod 0664 /sys/module/lowmemorykiller/parameters/adj
@@ -88,20 +115,6 @@ echo 32 > /sys/module/lowmemorykiller/parameters/cost
   echo "0" > /sys/module/mpm_of/parameters/debug_mask
   echo "0" > /sys/module/msm_pm/parameters/debug_mask
 OPEN_RW;
-
-# Adaptive LMK
-# $BB echo 1 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
-# $BB echo 53059 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
-
-# Process Reclaim
-# echo 1 > /sys/module/process_reclaim/parameters/enable_process_reclaim
-# echo 100 > /sys/module/process_reclaim/parameters/pressure_max
-
-# Tweak VM
-echo 200 > /proc/sys/vm/dirty_expire_centisecs
-echo 20 > /proc/sys/vm/dirty_background_ratio
-echo 40 > /proc/sys/vm/dirty_ratio
-echo 10 > /proc/sys/vm/swappiness
 
 # disable lge triton service
 if [ -e /system/bin/triton ]; then
