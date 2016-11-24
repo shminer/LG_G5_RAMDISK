@@ -4,48 +4,6 @@ cat << CTAG
 {
     name:{en:"MEMORY", zh_CN:"内存管理"},
     elements:[
-		`if [ -f "/sys/devices/virtual/block/zram0/disksize" ]; then
-		ZRAM=\`$BB cat /sys/devices/virtual/block/zram0/disksize\`;
-		ZRAM=$((ZRAM / 1024 / 1024));
-		$BB echo '{ SPane:{
-			title:"Z-RAM",
-			description:{en:"Attempts to increase performance by avoiding paging on physical storage, instead using a compressed virtual device in RAM. Paging takes place in RAM until it is necessary to use the swap space on physical storage.", zh_CN:"通过在 RAM 内的压缩块设备上分页，直到必须使用硬盘上虚拟内存的交换空间，以尽量避免在磁盘上进行分页，从而提高性能。Z-RAM可以在固有的内存上提供更多交换空间的功能。在内存紧张的时候可以节省内存空间，但压缩和解压内存分页上的数据会带来性能的消耗。假如你的内存不紧张的话，建议关闭."},
-		}},
-			{ SSeekBar:{
-				unit:" MB",
-				step:10,
-				min:0,
-				max:2048, 
-				default:'$ZRAM',
-				action:"zram /sys/devices/virtual/block/zram0/disksize"
-			}},'
-		fi`
-		`if [ -f "/sys/block/zram0/comp_algorithm" ]; then
-		CA=\`$BB echo $(/res/synapse/actions/bracket-option /sys/block/zram0/comp_algorithm)\`;
-			$BB echo '{ SOptionList:{
-				title:{en:"Compression Algorithm", zh_CN:"压缩算法"},
-				description:{en:"Applying a different option will reset Z-RAM. LZ4 algorithm tends to have a faster decompression. More info: <a href='https://code.google.com/p/lz4/'>HERE</a>.", zh_CN:"选用不同的压缩方式将重置Z-RAM。 LZ4算法倾向于更快的解压缩性能。更多信息请点击 : <a href='https://code.google.com/p/lz4/'>HERE</a>."},
-				default:'$CA',
-				action:"zram-bracket-option /sys/block/zram0/comp_algorithm",
-				values:['
-					for COMPALG in \`$BB cat /sys/block/zram0/comp_algorithm | $BB sed -e "s/\]//;s/\[//"\`; do
-						echo "\"$COMPALG\",";
-					done;
-				$BB echo '],
-			}},'
-		fi`
-		`if [ -f "/sys/block/zram0/max_comp_streams" ]; then
-		MCS=\`$BB cat /sys/block/zram0/max_comp_streams\`;
-			$BB echo '{ SSeekBar:{
-				title:{en:"Max Compression Streams", zh_CN:"压缩流"},
-				description:{en:"Applying a different option will reset Z-RAM. Can have N write operations (depending on size of streams list) executing in parallel.", zh_CN:"选用不同的压缩流将重置Z-RAM。压缩流越大可并行同时压缩的操作越多，同时越损耗性能."},
-				min:1,	
-				max:5,
-				step:1,
-				default:'$MCS',
-				action:"zram-generic /sys/block/zram0/max_comp_streams",
-			}},'
-		fi`
 		`if [ -f "/sys/kernel/mm/ksm/run" ]; then
 		KSM=\`$BB cat /sys/kernel/mm/ksm/run\`
 		PTS=\`$BB cat /sys/kernel/mm/ksm/pages_to_scan\`
