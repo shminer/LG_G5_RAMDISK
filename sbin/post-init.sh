@@ -52,18 +52,18 @@ if [ "$?" == 0 ];then
 	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	echo "alucard" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "alucard" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
-	wr_alu_cpufreq 0 freq_responsiveness 1324800
+	wr_alu_cpufreq 0 freq_responsiveness 1228800
 	wr_alu_cpufreq 0 freq_responsiveness_max 1401600
-	wr_alu_cpufreq 0 cpus_up_rate_at_max_freq 1
+	wr_alu_cpufreq 0 cpus_up_rate_at_max_freq 2
 	wr_alu_cpufreq 0 cpus_up_rate 1
 	wr_alu_cpufreq 0 cpus_down_rate_at_max_freq 1
 	wr_alu_cpufreq 0 cpus_down_rate 2
-	wr_alu_cpufreq 0 pump_inc_step_at_min_freq 3
+	wr_alu_cpufreq 0 pump_inc_step_at_min_freq 2
 	wr_alu_cpufreq 0 pump_inc_step 2
 	wr_alu_cpufreq 0 pump_dec_step_at_min_freq 1
-	wr_alu_cpufreq 0 pump_dec_step 2
+	wr_alu_cpufreq 0 pump_dec_step 1
 
-	wr_alu_cpufreq 2 freq_responsiveness 1248000
+	wr_alu_cpufreq 2 freq_responsiveness 1324800
 	wr_alu_cpufreq 2 freq_responsiveness_max 1920000
 	wr_alu_cpufreq 2 cpus_up_rate_at_max_freq 2
 	wr_alu_cpufreq 2 cpus_up_rate 1
