@@ -18,6 +18,9 @@ case "$1" in
 				for i in /sys/block/mmcblk*/queue/scheduler; do
 					$BB echo $2 > $i 2> /dev/null;
 				done;
+				for i in /sys/block/sd*/queue/scheduler; do
+					$BB echo $2 > $i 2> /dev/null;
+				done;
 			fi;
 
 			$BB echo `$BB cat /sys/block/mmcblk0/queue/scheduler | $BB sed -n -e '/\[[^]]/s/^[^[]*\[\([^]]*\)].*$/\1/p'`;
