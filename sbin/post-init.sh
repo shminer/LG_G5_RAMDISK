@@ -77,7 +77,7 @@ fi
 
 # input boost 
 echo "0:1324800 2:1190400" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo 350 > /sys/module/cpu_boost/parameters/input_boost_ms
+echo 490 > /sys/module/cpu_boost/parameters/input_boost_ms
 
 # Kernel tweak
 echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
