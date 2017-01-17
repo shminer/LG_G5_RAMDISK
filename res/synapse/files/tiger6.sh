@@ -375,4 +375,7 @@ case "$1" in
 		BAT_C=`$BB awk '{ print $1 / 10 }' /sys/class/power_supply/battery/temp`;
 	$BB echo "Battery current/Charge limit: @n${CN} / ${ibat_limit} ma @nBattery capacity: @n${CNR} / ${CFD}@nTEMP: ${BAT_C}°C";
 	;;
+	get_Measured_fps)
+		Measured_fps=`$BB cat /sys/devices/virtual/graphics/fb0/measured_fps`;
+	$BB echo "fb0_fps:${Measured_fps}";
 esac;

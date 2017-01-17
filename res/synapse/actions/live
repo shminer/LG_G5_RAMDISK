@@ -69,4 +69,7 @@ case $1 in
 	LiveCharge_State)
 		$BB echo `sh $DEVICE Charge_State`;
 	;;
+	Measured_fps)
+		$BB echo `sh $DEVICE get_Measured_fps`;
+	;;
 esac
