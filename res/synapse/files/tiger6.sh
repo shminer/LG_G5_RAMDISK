@@ -61,7 +61,7 @@ case "$1" in
 		C1_FREQMAX="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq` / 1000)MHz";
 		C0_FREQMIN="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq` / 1000)MHz";
 		C1_FREQMIN="$(expr `cat /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq` / 1000)MHz";
-		echo "LITTILE CORE: @nMAX: $C0_FREQMAX | MIN: $C1_FREQMIN @nBIG CORE: @nMAX: $C1_FREQMAX | MIN: $C1_FREQMIN"
+		echo "LITTILE CORE: @nMAX: $C0_FREQMAX | MIN: $C0_FREQMIN @nBIG CORE: @nMAX: $C1_FREQMAX | MIN: $C1_FREQMIN"
 	;;
 	DefaultCPUCURFrequency)
 		C0_FREQCUR="$(expr `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq` / 1000)MHz";
