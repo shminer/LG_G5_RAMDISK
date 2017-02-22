@@ -75,6 +75,31 @@ if [ "$?" == 0 ];then
 	wr_alu_cpufreq 2 pump_dec_step 2
 fi
 
+wr_alusched_cpufreq()
+{
+	echo ${3} > /sys/devices/system/cpu/cpu${1}/cpufreq/alucardsched/${2}
+}
+grep "alucardsched" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors > /dev/null
+if [ "$?" == 0 ];then
+	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	echo "alucardsched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo "alucardsched" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	wr_alusched_cpufreq 0 freq_responsiveness 1036800
+	wr_alusched_cpufreq 0 boost_perc 10
+	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 6
+	wr_alusched_cpufreq 0 pump_inc_step 3
+	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
+	wr_alusched_cpufreq 0 pump_dec_step 1
+
+	wr_alusched_cpufreq 2 freq_responsiveness 1190400
+	wr_alusched_cpufreq 2 boost_perc 10
+	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 6
+	wr_alusched_cpufreq 2 pump_inc_step 3
+	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
+	wr_alusched_cpufreq 2 pump_dec_step 2
+fi
+
 # input boost 
 echo "0:1324800 2:1190400" > /sys/module/cpu_boost/parameters/multi_boost_freq
 echo 980 > /sys/module/cpu_boost/parameters/input_boost_ms
