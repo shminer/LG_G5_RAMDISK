@@ -58,8 +58,8 @@ if [ "$?" == 0 ];then
 	wr_alu_cpufreq 0 cpus_up_rate 1
 	wr_alu_cpufreq 0 cpus_down_rate_at_max_freq 1
 	wr_alu_cpufreq 0 cpus_down_rate 1
-	wr_alu_cpufreq 0 pump_inc_step_at_min_freq 2
-	wr_alu_cpufreq 0 pump_inc_step 1
+	wr_alu_cpufreq 0 pump_inc_step_at_min_freq 4
+	wr_alu_cpufreq 0 pump_inc_step 2
 	wr_alu_cpufreq 0 pump_dec_step_at_min_freq 1
 	wr_alu_cpufreq 0 pump_dec_step 1
 
@@ -69,8 +69,8 @@ if [ "$?" == 0 ];then
 	wr_alu_cpufreq 2 cpus_up_rate 1
 	wr_alu_cpufreq 2 cpus_down_rate_at_max_freq 1
 	wr_alu_cpufreq 2 cpus_down_rate 1
-	wr_alu_cpufreq 2 pump_inc_step_at_min_freq 2
-	wr_alu_cpufreq 2 pump_inc_step 1
+	wr_alu_cpufreq 2 pump_inc_step_at_min_freq 3
+	wr_alu_cpufreq 2 pump_inc_step 2
 	wr_alu_cpufreq 2 pump_dec_step_at_min_freq 1
 	wr_alu_cpufreq 2 pump_dec_step 2
 fi
@@ -85,17 +85,21 @@ if [ "$?" == 0 ];then
 	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	echo "alucardsched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "alucardsched" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
-	wr_alusched_cpufreq 0 freq_responsiveness 1036800
-	wr_alusched_cpufreq 0 boost_perc 10
-	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 6
+	wr_alusched_cpufreq 0 freq_responsiveness 1190400
+	wr_alusched_cpufreq 0 boost_perc 15
+	wr_alusched_cpufreq 0 up_rate_limit_us 3000
+	wr_alusched_cpufreq 0 down_rate_limit_us 15000
+	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 4
 	wr_alusched_cpufreq 0 pump_inc_step 3
 	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 0 pump_dec_step 1
 
-	wr_alusched_cpufreq 2 freq_responsiveness 1190400
-	wr_alusched_cpufreq 2 boost_perc 10
-	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 6
-	wr_alusched_cpufreq 2 pump_inc_step 3
+	wr_alusched_cpufreq 2 freq_responsiveness 1248000
+	wr_alusched_cpufreq 2 boost_perc 12
+	wr_alusched_cpufreq 0 up_rate_limit_us 3000
+	wr_alusched_cpufreq 0 down_rate_limit_us 15000
+	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 4
+	wr_alusched_cpufreq 2 pump_inc_step 2
 	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 2 pump_dec_step 2
 fi
