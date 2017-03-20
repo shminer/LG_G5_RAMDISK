@@ -86,27 +86,29 @@ if [ "$?" == 0 ];then
 	echo "alucardsched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "alucardsched" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	wr_alusched_cpufreq 0 freq_responsiveness 1190400
-	wr_alusched_cpufreq 0 boost_perc 15
+	wr_alusched_cpufreq 0 boost_perc 10
 	wr_alusched_cpufreq 0 up_rate_limit_us 3000
-	wr_alusched_cpufreq 0 down_rate_limit_us 15000
-	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 4
-	wr_alusched_cpufreq 0 pump_inc_step 3
+	wr_alusched_cpufreq 0 energy_aware_mode 1
+	wr_alusched_cpufreq 0 down_rate_limit_us 10000
+	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 3
+	wr_alusched_cpufreq 0 pump_inc_step 2
 	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 0 pump_dec_step 1
 
 	wr_alusched_cpufreq 2 freq_responsiveness 1248000
-	wr_alusched_cpufreq 2 boost_perc 12
-	wr_alusched_cpufreq 0 up_rate_limit_us 3000
-	wr_alusched_cpufreq 0 down_rate_limit_us 15000
-	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 4
-	wr_alusched_cpufreq 2 pump_inc_step 2
+	wr_alusched_cpufreq 2 boost_perc 10
+	wr_alusched_cpufreq 2 up_rate_limit_us 3000
+	wr_alusched_cpufreq 2 energy_aware_mode 1
+	wr_alusched_cpufreq 2 down_rate_limit_us 12000
+	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 2
+	wr_alusched_cpufreq 2 pump_inc_step 1
 	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
-	wr_alusched_cpufreq 2 pump_dec_step 2
+	wr_alusched_cpufreq 2 pump_dec_step 1
 fi
 
 # input boost 
-echo "0:1324800 2:1190400" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo 980 > /sys/module/cpu_boost/parameters/input_boost_ms
+echo "0:1228800 2:1190400" > /sys/module/cpu_boost/parameters/multi_boost_freq
+echo 1150 > /sys/module/cpu_boost/parameters/input_boost_ms
 
 # Kernel tweak
 echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
