@@ -101,14 +101,189 @@ if [ "$?" == 0 ];then
 	wr_alusched_cpufreq 2 energy_aware_mode 1
 	wr_alusched_cpufreq 2 down_rate_limit_us 12000
 	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 2
-	wr_alusched_cpufreq 2 pump_inc_step 1
+	wr_alusched_cpufreq 2 pump_inc_step 2
 	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 2 pump_dec_step 1
 fi
 
 # input boost 
-echo "0:1228800 2:1190400" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo 1150 > /sys/module/cpu_boost/parameters/input_boost_ms
+echo "0:1190400 2:1248000" > /sys/module/cpu_boost/parameters/multi_boost_freq
+echo 1050 > /sys/module/cpu_boost/parameters/input_boost_ms
+
+# from msm8998
+for memlat in /sys/class/devfreq/*qcom,memlat-cpu*
+do
+    echo "mem_latency" > $memlat/governor
+    echo 10 > $memlat/polling_interval
+    echo 400 > $memlat/mem_latency/ratio_ceil
+done
+
+# from Eliminater74
+function write() {
+   $BB echo -n "$2" > "$1"
+}
+
+CREATE_EAS_CGROUPS_STUNE_TUNING_NODES() {
+	# Create energy-aware scheduler tuning nodes
+    mkdir /sys/fs/cgroup/stune
+    mount -t cgroup none /sys/fs/cgroup/stune schedtune
+	#mount -t cgroup -o schedtune stune /sys/fs/cgroup/stune
+    mkdir /sys/fs/cgroup/stune/foreground
+	mkdir /sys/fs/cgroup/stune/performance
+    chown system system /sys/fs/cgroup/stune
+    chown system system /sys/fs/cgroup/stune/foreground
+    chown system system /sys/fs/cgroup/stune/tasks
+    chown system system /sys/fs/cgroup/stune/foreground/tasks
+    chmod 0664 /sys/fs/cgroup/stune/tasks
+    chmod 0664 /sys/fs/cgroup/stune/foreground/tasks
+	chmod 0664 /sys/fs/cgroup/stune/performance/tasks
+}
+CREATE_EAS_CGROUPS_STUNE_TUNING_NODES;
+
+CREATE_EAS_TUNING_NODES() {
+	# Create energy-aware scheduler tuning nodes
+    mkdir /dev/stune
+    mount -t cgroup none /dev/stune schedtune
+    mkdir /dev/stune/foreground
+    mkdir /dev/stune/background
+    mkdir /dev/stune/top-app
+    chown system system /dev/stune
+    chown system system /dev/stune/foreground
+    chown system system /dev/stune/background
+    chown system system /dev/stune/top-app
+    chown system system /dev/stune/tasks
+    chown system system /dev/stune/foreground/tasks
+    chown system system /dev/stune/background/tasks
+    chown system system /dev/stune/top-app/tasks
+    chmod 0664 /dev/stune/tasks
+    chmod 0664 /dev/stune/foreground/tasks
+    chmod 0664 /dev/stune/background/tasks
+    chmod 0664 /dev/stune/top-app/tasks
+}
+CREATE_EAS_TUNING_NODES;
+
+CREATE_CPUSETS() {
+	# Make sure CPUSET is set right
+    mkdir /dev/cpuset
+    mount cpuset none /dev/cpuset
+    mkdir /dev/cpuset/foreground
+    write /dev/cpuset/foreground/cpus 0
+    write /dev/cpuset/foreground/mems 0
+    mkdir /dev/cpuset/foreground/boost
+    write /dev/cpuset/foreground/boost/cpus 0
+    write /dev/cpuset/foreground/boost/mems 0
+    mkdir /dev/cpuset/background
+    write /dev/cpuset/background/cpus 0
+    write /dev/cpuset/background/mems 0	
+    # system-background is for system tasks that should only run on
+    # little cores, not on bigs
+    # to be used only by init, so don't change system-bg permissions
+    mkdir /dev/cpuset/system-background
+    write /dev/cpuset/system-background/cpus 0
+    write /dev/cpuset/system-background/mems 0
+    mkdir /dev/cpuset/top-app
+    write /dev/cpuset/top-app/cpus 0
+    write /dev/cpuset/top-app/mems 0	
+    # change permissions for all cpusets we'll touch at runtime
+    chown system system /dev/cpuset
+    chown system system /dev/cpuset/foreground
+    chown system system /dev/cpuset/foreground/boost
+    chown system system /dev/cpuset/background
+    chown system system /dev/cpuset/system-background
+    chown system system /dev/cpuset/top-app
+    chown system system /dev/cpuset/tasks
+    chown system system /dev/cpuset/foreground/tasks
+    chown system system /dev/cpuset/foreground/boost/tasks
+    chown system system /dev/cpuset/background/tasks
+    chown system system /dev/cpuset/system-background/tasks
+    chown system system /dev/cpuset/top-app/tasks	
+    # set system-background to 0775 so SurfaceFlinger can touch it
+    chmod 0775 /dev/cpuset/system-background
+    chmod 0664 /dev/cpuset/foreground/tasks
+    chmod 0664 /dev/cpuset/foreground/boost/tasks
+    chmod 0664 /dev/cpuset/background/tasks
+    chmod 0664 /dev/cpuset/system-background/tasks
+    chmod 0664 /dev/cpuset/top-app/tasks
+    chmod 0664 /dev/cpuset/tasks
+}
+CREATE_CPUSETS;
+
+SET_EAS_CGROUP_STUNE() {
+	write /sys/fs/cgroup/stune/cgroup.clone_children 0
+	# write /sys/fs/cgroup/stune/cgroup.procs
+	write /sys/fs/cgroup/stune/cgroup.sane_behavior 1
+	write /sys/fs/cgroup/stune/notify_on_release 0
+	# write /sys/fs/cgroup/stune/release_agent
+	write /sys/fs/cgroup/stune/schedtune.boost 4
+	write /sys/fs/cgroup/stune/schedtune.prefer_idle 1
+	# write /sys/fs/cgroup/stune/tasks
+
+	### Perfomance ###
+	write /sys/fs/cgroup/stune/performance/cgroup.clone_children 0
+	# write /sys/fs/cgroup/stune/performance/cgroup.procs
+	write /sys/fs/cgroup/stune/performance/notify_on_release 0
+	write /sys/fs/cgroup/stune/performance/schedtune.boost 100
+	write /sys/fs/cgroup/stune/performance/schedtune.prefer_idle 0
+	# write /sys/fs/cgroup/stune/performance/tasks
+
+	write /proc/sys/kernel/sched_child_runs_first 0
+	write /proc/sys/kernel/sched_cstate_aware 1
+	write /proc/sys/kernel/sched_initial_task_util 0
+	write /proc/sys/kernel/sched_is_big_little 1
+	write /proc/sys/kernel/sched_latency_ns 10000000
+	write /proc/sys/kernel/sched_migration_cost_ns 500000
+	write /proc/sys/kernel/sched_min_granularity_ns 900000
+	write /proc/sys/kernel/sched_nr_migrate 24
+	write /proc/sys/kernel/sched_rr_timeslice_ms 10
+	write /proc/sys/kernel/sched_rt_period_us 1000000
+	write /proc/sys/kernel/sched_rt_runtime_us 950000
+	write /proc/sys/kernel/sched_shares_window_ns 10000000
+	write /proc/sys/kernel/sched_sync_hint_enable 1
+	write /proc/sys/kernel/sched_time_avg_ms 1000
+	write /proc/sys/kernel/sched_tunable_scaling 0
+	write /proc/sys/kernel/sched_use_walt_cpu_util 1
+	write /proc/sys/kernel/sched_use_walt_task_util 1
+	write /proc/sys/kernel/sched_wakeup_granularity_ns 250000
+	write /proc/sys/kernel/sched_walt_cpu_high_irqload 10000000
+	write /proc/sys/kernel/sched_walt_init_task_load_pct 10
+}
+SET_EAS_CGROUP_STUNE;
+	
+SET_CPUSETS() {
+	# Update foreground and background cpusets
+	write /dev/cpuset/foreground/cpus 0-3
+	write /dev/cpuset/foreground/boost/cpus 0-3
+	write /dev/cpuset/background/cpus 0-3
+	write /dev/cpuset/system-background/cpus 0-3
+	write /dev/cpuset/top-app/cpus 0-3
+	# set default schedTune value for foreground/top-app (only affects EAS)
+	write /dev/stune/foreground/schedtune.prefer_idle 1
+	write /dev/stune/schedtune.boost 20
+	write /dev/stune/schedtune.prefer_idle 1
+}
+SET_CPUSETS;
+
+CPU_BUS_DCVS() {
+	# Enable bus-dcvs
+	echo "[Nebulix] Configure bus-dcvs" | tee /dev/kmsg
+	for cpubw in /sys/class/devfreq/*qcom,cpubw* ; do
+		write $cpubw/governor "bw_hwmon"
+		write $cpubw/polling_interval 50
+		write $cpubw/min_freq 1525
+		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
+		write $cpubw/bw_hwmon/sample_ms 2
+		write $cpubw/bw_hwmon/io_percent 20
+		write $cpubw/bw_hwmon/hist_memory 20
+		write $cpubw/bw_hwmon/hyst_length 10
+		write $cpubw/bw_hwmon/low_power_ceil_mbps 0
+		write $cpubw/bw_hwmon/low_power_io_percent 20
+		write $cpubw/bw_hwmon/low_power_delay 20
+		write $cpubw/bw_hwmon/guard_band_mbps 0
+		write $cpubw/bw_hwmon/up_scale 250
+		write $cpubw/bw_hwmon/idle_mbps 1200
+	done
+}
+CPU_BUS_DCVS;
 
 # Kernel tweak
 echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
