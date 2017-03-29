@@ -110,14 +110,6 @@ fi
 echo "0:1190400 2:1248000" > /sys/module/cpu_boost/parameters/multi_boost_freq
 echo 1050 > /sys/module/cpu_boost/parameters/input_boost_ms
 
-# from msm8998
-for memlat in /sys/class/devfreq/*qcom,memlat-cpu*
-do
-    echo "mem_latency" > $memlat/governor
-    echo 10 > $memlat/polling_interval
-    echo 400 > $memlat/mem_latency/ratio_ceil
-done
-
 # from Eliminater74
 function write() {
    $BB echo -n "$2" > "$1"
@@ -253,8 +245,9 @@ SET_CPUSETS() {
 	# Update foreground and background cpusets
 	write /dev/cpuset/foreground/cpus 0-3
 	write /dev/cpuset/foreground/boost/cpus 0-3
-	write /dev/cpuset/background/cpus 0-3
-	write /dev/cpuset/system-background/cpus 0-3
+	write /dev/cpuset/background/cpus 0-2
+	write /dev/cpuset/camera-daemon/cpus 0-2
+	write /dev/cpuset/system-background/cpus 0-1
 	write /dev/cpuset/top-app/cpus 0-3
 	# set default schedTune value for foreground/top-app (only affects EAS)
 	write /dev/stune/foreground/schedtune.prefer_idle 1
@@ -265,23 +258,24 @@ SET_CPUSETS;
 
 CPU_BUS_DCVS() {
 	# Enable bus-dcvs
-	echo "[Nebulix] Configure bus-dcvs" | tee /dev/kmsg
 	for cpubw in /sys/class/devfreq/*qcom,cpubw* ; do
 		write $cpubw/governor "bw_hwmon"
 		write $cpubw/polling_interval 50
 		write $cpubw/min_freq 1525
 		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
 		write $cpubw/bw_hwmon/sample_ms 2
-		write $cpubw/bw_hwmon/io_percent 20
+		write $cpubw/bw_hwmon/bw_step 170
+		write $cpubw/bw_hwmon/io_percent 25
 		write $cpubw/bw_hwmon/hist_memory 20
 		write $cpubw/bw_hwmon/hyst_length 10
 		write $cpubw/bw_hwmon/low_power_ceil_mbps 0
-		write $cpubw/bw_hwmon/low_power_io_percent 20
+		write $cpubw/bw_hwmon/low_power_io_percent 25
 		write $cpubw/bw_hwmon/low_power_delay 20
 		write $cpubw/bw_hwmon/guard_band_mbps 0
 		write $cpubw/bw_hwmon/up_scale 250
-		write $cpubw/bw_hwmon/idle_mbps 1200
+		write $cpubw/bw_hwmon/idle_mbps 1600
 	done
+
 }
 CPU_BUS_DCVS;
 
