@@ -92,17 +92,17 @@ if [ "$?" == 0 ];then
 	wr_alusched_cpufreq 0 energy_aware_mode 1
 	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 3
 	wr_alusched_cpufreq 0 pump_inc_step 2
-	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 2
+	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 0 pump_dec_step 1
 
 	wr_alusched_cpufreq 2 freq_responsiveness 1248000
-	wr_alusched_cpufreq 0 freq_responsiveness_jump 1
-	wr_alusched_cpufreq 0 iowait_boost_enable 1
+	wr_alusched_cpufreq 2 freq_responsiveness_jump 1
+	wr_alusched_cpufreq 2 iowait_boost_enable 1
 	wr_alusched_cpufreq 2 boost_perc 10
 	wr_alusched_cpufreq 2 energy_aware_mode 1
 	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 3
 	wr_alusched_cpufreq 2 pump_inc_step 2
-	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 2
+	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 2 pump_dec_step 2
 fi
 
