@@ -86,24 +86,24 @@ if [ "$?" == 0 ];then
 	echo "alucardsched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "alucardsched" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	wr_alusched_cpufreq 0 freq_responsiveness 1190400
+	wr_alusched_cpufreq 0 freq_responsiveness_jump 1
+	wr_alusched_cpufreq 0 iowait_boost_enable 1
 	wr_alusched_cpufreq 0 boost_perc 10
-	wr_alusched_cpufreq 0 up_rate_limit_us 3000
 	wr_alusched_cpufreq 0 energy_aware_mode 1
-	wr_alusched_cpufreq 0 down_rate_limit_us 10000
 	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 3
 	wr_alusched_cpufreq 0 pump_inc_step 2
-	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
+	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 2
 	wr_alusched_cpufreq 0 pump_dec_step 1
 
 	wr_alusched_cpufreq 2 freq_responsiveness 1248000
+	wr_alusched_cpufreq 0 freq_responsiveness_jump 1
+	wr_alusched_cpufreq 0 iowait_boost_enable 1
 	wr_alusched_cpufreq 2 boost_perc 10
-	wr_alusched_cpufreq 2 up_rate_limit_us 3000
 	wr_alusched_cpufreq 2 energy_aware_mode 1
-	wr_alusched_cpufreq 2 down_rate_limit_us 12000
-	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 2
+	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 3
 	wr_alusched_cpufreq 2 pump_inc_step 2
-	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
-	wr_alusched_cpufreq 2 pump_dec_step 1
+	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 2
+	wr_alusched_cpufreq 2 pump_dec_step 2
 fi
 
 # input boost 
@@ -284,12 +284,14 @@ echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
 echo "0" > /proc/sys/vm/panic_on_oom; # default: 0
 echo "5" > /proc/sys/kernel/panic; # default: 5
 echo "0" > /proc/sys/kernel/panic_on_oops; # default: 1
-echo "5" > /proc/sys/vm/dirty_background_ratio; # default: 5
-echo "20" > /proc/sys/vm/dirty_ratio; # default: 20
+echo "8" > /proc/sys/vm/dirty_background_ratio; # default: 5
+echo "28" > /proc/sys/vm/dirty_ratio; # default: 20
 echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
 echo "1" > /proc/sys/vm/overcommit_memory; # default: 1
 echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 echo "0" > /proc/sys/vm/page-cluster; # default: 0
+echo "85" > /proc/sys/vm/swappiness; # default: 60
+echo "55" > /proc/sys/vm/vfs_cache_pressure; # default: 60
 # mem calc here in pages. so 16384 x 4 = 64MB reserved for fast access by kernel and VM
 echo "32768" > /proc/sys/vm/mmap_min_addr; #default: 32768
 
