@@ -33,6 +33,11 @@ cat << CTAG
 				action:"live LiveCharge_State"
 			}},
 			{ SLiveLabel:{
+				title:{en:"USB States:",zh_CN:"USB状态:"},
+				refresh:3000,
+				action:"live LiveUSB_State"
+			}},
+			{ SLiveLabel:{
 				title:{en:"Memory status:",zh_CN:"内存状态:"},
 				refresh:3000,
 				action:"live Memory"
