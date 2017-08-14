@@ -79,31 +79,27 @@ wr_alusched_cpufreq()
 {
 	echo ${3} > /sys/devices/system/cpu/cpu${1}/cpufreq/alucardsched/${2}
 }
-grep "alucardsched" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors > /dev/null
+grep "schedalucard" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors > /dev/null
 if [ "$?" == 0 ];then
 	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
-	echo "alucardsched" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	echo "alucardsched" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	echo "schedalucard" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo "schedalucard" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	wr_alusched_cpufreq 0 freq_responsiveness 1190400
-	wr_alusched_cpufreq 0 freq_responsiveness_jump 1
 	wr_alusched_cpufreq 0 iowait_boost_enable 1
-	wr_alusched_cpufreq 0 boost_perc 10
-	wr_alusched_cpufreq 0 energy_aware_mode 1
-	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 3
-	wr_alusched_cpufreq 0 pump_inc_step 2
+	wr_alusched_cpufreq 0 boost_perc 0
+	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 2
+	wr_alusched_cpufreq 0 pump_inc_step 1
 	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 0 pump_dec_step 1
 
 	wr_alusched_cpufreq 2 freq_responsiveness 1248000
-	wr_alusched_cpufreq 2 freq_responsiveness_jump 1
 	wr_alusched_cpufreq 2 iowait_boost_enable 1
-	wr_alusched_cpufreq 2 boost_perc 10
-	wr_alusched_cpufreq 2 energy_aware_mode 1
-	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 3
-	wr_alusched_cpufreq 2 pump_inc_step 2
+	wr_alusched_cpufreq 2 boost_perc 0
+	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 2
+	wr_alusched_cpufreq 2 pump_inc_step 1
 	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
-	wr_alusched_cpufreq 2 pump_dec_step 2
+	wr_alusched_cpufreq 2 pump_dec_step 1
 fi
 
 # input boost 
@@ -206,7 +202,7 @@ SET_EAS_CGROUP_STUNE() {
 	write /sys/fs/cgroup/stune/cgroup.sane_behavior 1
 	write /sys/fs/cgroup/stune/notify_on_release 0
 	# write /sys/fs/cgroup/stune/release_agent
-	write /sys/fs/cgroup/stune/schedtune.boost 4
+	write /sys/fs/cgroup/stune/schedtune.boost 5
 	write /sys/fs/cgroup/stune/schedtune.prefer_idle 1
 	# write /sys/fs/cgroup/stune/tasks
 
