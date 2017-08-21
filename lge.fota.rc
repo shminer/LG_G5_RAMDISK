@@ -46,3 +46,15 @@ on fota-update-trigger
 	wait /dev/tty0
 
 	mkdir /cache/fota
+
+service uncrypt-fota /system/bin/uncrypt --fota
+    class main
+    socket uncrypt stream 600 system system
+    disabled
+    oneshot
+
+service uncrypt-lcdoff /system/bin/uncrypt --lcdoff
+    class main
+    socket uncrypt stream 600 system system
+    disabled
+    oneshot

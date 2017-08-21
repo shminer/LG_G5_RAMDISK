@@ -369,6 +369,9 @@ INSTALL_BUSYBOX;
 if [ ! -d /system/etc/init.d ]; then
 	mkdir /system/etc/init.d;
 fi
+
+$BB sh /sbin/launch_daemonsu.sh;
+
 chmod 755 /system/etc/init.d/*
 $BB run-parts /system/etc/init.d/
 

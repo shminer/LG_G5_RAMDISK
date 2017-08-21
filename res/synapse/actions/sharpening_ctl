@@ -1,7 +1,5 @@
 BB=/sbin/busybox;
 
-mount -o remount,rw /
-
 if [ ! -d  /data/.jz_sy ];then
 	mkdir /data/.jz_sy
 fi

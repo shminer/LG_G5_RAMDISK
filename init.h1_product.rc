@@ -24,6 +24,12 @@ on post-fs-data
     mkdir /data/nfc 0770 nfc nfc
     mkdir /data/nfc/param 0770 nfc nfc
 
+# create callduration file
+on property:ro.lge.callduration=1
+   mkdir /persist-lg/callduration
+   chown system radio /persist-lg/callduration
+   chmod 0770 /persist-lg/callduration
+
 # LGE IMS Features - To interwork with QMI WMS (64-bit exe/lib)
 service imswmsproxy /system/bin/imswmsproxy
     class main
