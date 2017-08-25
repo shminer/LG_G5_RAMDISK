@@ -1,8 +1,8 @@
 #
 # initialize and configure zram/swap including some tweaks related.
 #
-# service zramswapon /system/bin/logwrapper /system/bin/sh /system/etc/init.lge.zramswap.sh start
-service zramswapon /system/bin/sh /system/etc/init.lge.zramswap.sh start
+# service zramswapon /system/bin/sh /sbin/init.lge.zramswap.sh start
+service zramswapon /system/bin/sh /sbin/init.lge.zramswap.sh start
 	user root
 	group system
 	disabled
@@ -16,7 +16,7 @@ service zramswapon /system/bin/sh /system/etc/init.lge.zramswap.sh start
 #
 # deinit the zram/swap
 #
-service zramswapoff /system/bin/logwrapper /system/bin/sh /system/etc/init.lge.zramswap.sh stop
+service zramswapoff /system/bin/sh /sbin/init.lge.zramswap.sh stop
 	user root
 	group system
 	disabled
