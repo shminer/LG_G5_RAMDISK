@@ -98,7 +98,7 @@ start() {
         nr_multi_zram=4
     ;;
     *)
-      sz_zram=$((((memtotal_kb/5) / ${nr_zramdev}) * 1024))
+      sz_zram=$((((memtotal_kb/4) / ${nr_zramdev}) * 1024))
     ;;
   esac
   echo sz_zram size is ${sz_zram}
