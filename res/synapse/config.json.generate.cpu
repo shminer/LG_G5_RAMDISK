@@ -72,6 +72,30 @@ cat << CTAG
 							$BB echo '}
 						}},'
 					fi`
+					{ STitleBar:{
+						title:{en:"thermal-engine limit", zh_CN:"温控服务限制"}
+						description:{en:"now we can control the thermal-engine MAX/MIN limit by kernel,warning! maybe destory your phone or phone will overheat case reboot.", zh_CN:"我们现在可以在内核中控制系统的温控服务对频率做出的限制,过高的频率会导致温度过高重启或引起手机损坏。"},
+					}},
+					`if [ -f "/sys/module/msm_thermal/parameters/c0_ioctl_user_max_freq_limit" ]; then
+						$BB echo '{ SSeekBar:{
+							title:{en:"Cluster0 max limit heat", zh_CN:"小核心温控服务最大频率限制"},
+							default:'\`$BB cat /sys/module/msm_thermal/parameters/c0_ioctl_user_max_freq_limit\`',
+							action:"generic /sys/module/msm_thermal/parameters/c0_ioctl_user_max_freq_limit",
+							values:{'
+								sh $DEVICE C0FrequencyList
+							$BB echo '}
+						}},'
+					fi`
+					`if [ -f "/sys/module/msm_thermal/parameters/c1_ioctl_user_max_freq_limit" ]; then
+						$BB echo '{ SSeekBar:{
+							title:{en:"Cluster1 max limit heat", zh_CN:"大核心温控服务最大频率限制"},
+							default:'\`$BB cat /sys/module/msm_thermal/parameters/c1_ioctl_user_max_freq_limit\`',
+							action:"generic /sys/module/msm_thermal/parameters/c1_ioctl_user_max_freq_limit",
+							values:{'
+								sh $DEVICE C1FrequencyList
+							$BB echo '}
+						}},'
+					fi`
 			`if [ -f "/sys/module/workqueue/parameters/power_efficient" ]; then
 				PE=\`bool /sys/module/workqueue/parameters/power_efficient\`
 					$BB echo '{ SPane:{
