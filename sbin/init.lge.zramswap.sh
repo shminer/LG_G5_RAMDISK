@@ -93,7 +93,7 @@ start() {
         esac
     ;;
     "msm8996" | "msm8952")
-        sz_zram=$((((memtotal_kb/5) / ${nr_zramdev}) * 1024))
+        sz_zram=$((((memtotal_kb/4) / ${nr_zramdev}) * 1024))
         compr_zram=lz4
         nr_multi_zram=4
     ;;
