@@ -7,9 +7,9 @@ security.perf_harden=1
 ro.adb.secure=1
 ro.allow.mock.location=0
 ro.debuggable=0
-pm.dexopt.install=interpret-only
-pm.dexopt.first-boot=interpret-only
-pm.dexopt.boot=verify-profile
+pm.dexopt.install=speed
+pm.dexopt.first-boot=speed
+pm.dexopt.boot=speed
 persist.hvdcp.allow_opti=1
 persist.sys.usb.config=boot
 ro.zygote=zygote64_32
@@ -32,7 +32,7 @@ ro.lge.fmframework.enabled=true
 #
 # BOOTIMAGE_BUILD_PROPERTIES
 #
-ro.bootimage.build.date=Mon Apr 3 15:40:57 KST 2017
-ro.bootimage.build.date.utc=1491201657
-ro.bootimage.build.fingerprint=lge/h1_global_com/h1:7.0/NRD90U/170931540650d:user/release-keys
+ro.bootimage.build.date=Tue Aug 22 11:59:33 IST 2017
+ro.bootimage.build.date.utc=1503383373
+ro.bootimage.build.fingerprint=lge/h1_global_com/h1:7.0/NRD90U/1723415298d9e:user/release-keys
 

@@ -280,16 +280,17 @@ echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
 echo "0" > /proc/sys/vm/panic_on_oom; # default: 0
 echo "5" > /proc/sys/kernel/panic; # default: 5
 echo "0" > /proc/sys/kernel/panic_on_oops; # default: 1
-echo "8" > /proc/sys/vm/dirty_background_ratio; # default: 5
-echo "28" > /proc/sys/vm/dirty_ratio; # default: 20
+echo "5" > /proc/sys/vm/dirty_background_ratio; # default: 5
+echo "20" > /proc/sys/vm/dirty_ratio; # default: 20
 echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
 echo "1" > /proc/sys/vm/overcommit_memory; # default: 1
 echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 echo "0" > /proc/sys/vm/page-cluster; # default: 0
-echo "85" > /proc/sys/vm/swappiness; # default: 60
-echo "55" > /proc/sys/vm/vfs_cache_pressure; # default: 60
+echo "65" > /proc/sys/vm/swappiness; # default: 60
+echo "80" > /proc/sys/vm/vfs_cache_pressure; # default: 60
 # mem calc here in pages. so 16384 x 4 = 64MB reserved for fast access by kernel and VM
 echo "32768" > /proc/sys/vm/mmap_min_addr; #default: 32768
+echo "94912" > /proc/sys/vm/min_free_kbytes;
 
 # Permissions for LMK
 chmod 0664 /sys/module/lowmemorykiller/parameters/adj

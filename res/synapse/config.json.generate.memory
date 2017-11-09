@@ -50,6 +50,10 @@ cat << CTAG
 				}},'
 		fi`
 			{ SButton:{
+				label:{en:"Ultra memory cleaner", zh_CN:"终极内存清理"},
+				action:"ultra_mem"
+			}},
+			{ SButton:{
 				label:{en:"Drop caches immediately", zh_CN:"立即丢弃缓存"},
 				action:"drop_caches"
 			}},
