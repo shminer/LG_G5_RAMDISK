@@ -101,7 +101,9 @@ if [ "$?" == 0 ];then
 	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
 	wr_alusched_cpufreq 2 pump_dec_step 1
 fi
-
+#set default governor
+	echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo "schedutil" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 # input boost 
 echo "0:1190400 2:1248000" > /sys/module/cpu_boost/parameters/multi_boost_freq
 echo 1050 > /sys/module/cpu_boost/parameters/input_boost_ms
