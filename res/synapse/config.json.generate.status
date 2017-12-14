@@ -43,32 +43,9 @@ cat << CTAG
 				action:"live Memory"
 			}},
 			{ SLiveLabel:{
-				title:{en:"PANEL FPS:",zh_CN:"当前帧数:"},
-				refresh:100,
-				action:"live Measured_fps"
-			}},
-			{ SLiveLabel:{
 				title:{en:"UP times:",zh_CN:"使用时间:"},
 				refresh:5000,
 				action:"live UpTime"
-			}},
-			{ SLiveLabel:{
-				title:{en:"UnUsed frequency:",zh_CN:"未使用频率:"},
-				refresh:5000,
-				action:"live UnUsed"
-			}},
-			{ SLiveLabel:{
-				title:{en:"Time in States:",zh_CN:"各频率时间:"},
-				refresh:5000,
-				action:"live Time 0 9"
-			}},
-			{ SLiveLabel:{
-				refresh:5000,
-				action:"live Time 10 19"
-			}},
-			{ SLiveLabel:{
-				refresh:5000,
-				action:"live Time 20 20"
 			}},
 		]
 }

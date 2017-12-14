@@ -371,16 +371,12 @@ case "$1" in
 		CFD="$((`$BB cat /sys/class/power_supply/bms/charge_full_design` / 1000)) MAh";
 		CNR="$((`$BB cat /sys/class/power_supply/bms/charge_now_raw` / 1000)) MAh";
 		CN="$((`$BB cat /sys/class/power_supply/bms/current_now` / -1000))ma";
-		BT=`$BB cat /sys/class/power_supply/bms/battery_type`;
 		BAT_C=`$BB awk '{ print $1 / 10 }' /sys/class/power_supply/battery/temp`;
-	$BB echo "Battery current: ${CN}   @nBattery capacity: @n${CNR} / ${CFD}@nTEMP: ${BAT_C}°C@nBattery Type:@n${BT}";
+	$BB echo "Battery current: ${CN}   @nBattery capacity: @n${CNR} / ${CFD}@nTEMP: ${BAT_C}°C@nBattery";
 	;;
 	USB_State)
 		VOLTAGE=`$BB awk '{ print $1 / 1000000 }' /sys/class/power_supply/usb/voltage_now`;
 		CT=`$BB cat  /sys/class/power_supply/usb/type`;
 	$BB echo "Voltage: ${VOLTAGE}V @nCharger type: ${CT}";
 	;;
-	get_Measured_fps)
-		Measured_fps=`$BB cat /sys/devices/virtual/graphics/fb0/measured_fps`;
-	$BB echo "fb0_fps:${Measured_fps}";
 esac;
