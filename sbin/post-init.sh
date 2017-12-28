@@ -305,6 +305,9 @@ chmod 0664 /sys/module/lowmemorykiller/parameters/vmpressure_file_min
 echo "12288,15360,18432,21504,24576,30720" > /sys/module/lowmemorykiller/parameters/minfree
 echo 32 > /sys/module/lowmemorykiller/parameters/cost
 
+# KCAL for LG G5/V20 panel
+echo "248 250 246" > /sys/devices/platform/kcal_ctrl.0/kcal
+
 # disable debugging on some modules
   echo "N" > /sys/module/kernel/parameters/initcall_debug;
   echo "0" > /sys/module/smd/parameters/debug_mask
