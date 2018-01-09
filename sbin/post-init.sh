@@ -306,7 +306,7 @@ echo "12288,15360,18432,21504,24576,30720" > /sys/module/lowmemorykiller/paramet
 echo 32 > /sys/module/lowmemorykiller/parameters/cost
 
 # KCAL for LG G5/V20 panel
-echo "248 250 246" > /sys/devices/platform/kcal_ctrl.0/kcal
+echo "241 241 241" > /sys/devices/platform/kcal_ctrl.0/kcal
 
 # disable debugging on some modules
   echo "N" > /sys/module/kernel/parameters/initcall_debug;
