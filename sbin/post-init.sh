@@ -105,8 +105,9 @@ fi
 	echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "schedutil" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 # input boost 
-echo "0:1190400 2:1248000" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo 1050 > /sys/module/cpu_boost/parameters/input_boost_ms
+echo "0:1190400 2:1036800" > /sys/module/cpu_boost/parameters/multi_boost_freq
+echo 500 > /sys/module/cpu_boost/parameters/input_boost_ms
+echo 750 > /sys/module/cpu_boost/parameters/input_boost_off_ms
 
 # from Eliminater74
 function write() {
@@ -282,14 +283,15 @@ echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
 echo "0" > /proc/sys/vm/panic_on_oom; # default: 0
 echo "5" > /proc/sys/kernel/panic; # default: 5
 echo "0" > /proc/sys/kernel/panic_on_oops; # default: 1
-echo "5" > /proc/sys/vm/dirty_background_ratio; # default: 5
-echo "20" > /proc/sys/vm/dirty_ratio; # default: 20
+echo "15" > /proc/sys/vm/dirty_background_ratio; # default: 5
+echo "25" > /proc/sys/vm/dirty_ratio; # default: 20
 echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
 echo "1" > /proc/sys/vm/overcommit_memory; # default: 1
 echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 echo "0" > /proc/sys/vm/page-cluster; # default: 0
-echo "65" > /proc/sys/vm/swappiness; # default: 60
-echo "80" > /proc/sys/vm/vfs_cache_pressure; # default: 60
+echo "90" > /proc/sys/vm/swappiness; # default: 60
+echo "110" > /proc/sys/vm/vfs_cache_pressure; # default: 60
+echo "1300" > /proc/sys/vm/dirty_expire_centisecs; # default: 60
 # mem calc here in pages. so 16384 x 4 = 64MB reserved for fast access by kernel and VM
 echo "32768" > /proc/sys/vm/mmap_min_addr; #default: 32768
 echo "94912" > /proc/sys/vm/min_free_kbytes;
