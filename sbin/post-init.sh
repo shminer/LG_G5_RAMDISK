@@ -244,13 +244,13 @@ SET_CPUSETS() {
 	# Update foreground and background cpusets
 	write /dev/cpuset/foreground/cpus 0-3
 	write /dev/cpuset/foreground/boost/cpus 0-3
-	write /dev/cpuset/background/cpus 0-2
-	write /dev/cpuset/camera-daemon/cpus 0-2
+	write /dev/cpuset/background/cpus 0-1
+	write /dev/cpuset/camera-daemon/cpus 2-3
 	write /dev/cpuset/system-background/cpus 0-1
 	write /dev/cpuset/top-app/cpus 0-3
 	# set default schedTune value for foreground/top-app (only affects EAS)
 	write /dev/stune/foreground/schedtune.prefer_idle 1
-	write /dev/stune/schedtune.boost 20
+	write /dev/stune/schedtune.boost 10
 	write /dev/stune/schedtune.prefer_idle 1
 }
 SET_CPUSETS;
