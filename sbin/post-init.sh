@@ -105,9 +105,9 @@ fi
 	echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "schedutil" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 # input boost 
-echo "0:1190400 2:1036800" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo 500 > /sys/module/cpu_boost/parameters/input_boost_ms
-echo 750 > /sys/module/cpu_boost/parameters/input_boost_off_ms
+echo "0:1228800 2:1190400" > /sys/module/cpu_boost/parameters/input_boost_freq
+echo 950 > /sys/module/cpu_boost/parameters/input_boost_ms
+echo 500 > /sys/module/cpu_boost/parameters/input_boost_off_ms
 
 # from Eliminater74
 function write() {
@@ -245,7 +245,7 @@ SET_CPUSETS() {
 	write /dev/cpuset/foreground/cpus 0-3
 	write /dev/cpuset/foreground/boost/cpus 0-3
 	write /dev/cpuset/background/cpus 0-1
-	write /dev/cpuset/camera-daemon/cpus 2-3
+	write /dev/cpuset/camera-daemon/cpus 0-3
 	write /dev/cpuset/system-background/cpus 0-1
 	write /dev/cpuset/top-app/cpus 0-3
 	# set default schedTune value for foreground/top-app (only affects EAS)
