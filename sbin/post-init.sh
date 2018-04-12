@@ -250,7 +250,7 @@ SET_CPUSETS() {
 	write /dev/cpuset/top-app/cpus 0-3
 	# set default schedTune value for foreground/top-app (only affects EAS)
 	write /dev/stune/foreground/schedtune.prefer_idle 1
-	write /dev/stune/schedtune.boost 10
+	write /dev/stune/schedtune.boost 5
 	write /dev/stune/schedtune.prefer_idle 1
 }
 SET_CPUSETS;
@@ -262,13 +262,13 @@ CPU_BUS_DCVS() {
 		write $cpubw/polling_interval 50
 		write $cpubw/min_freq 1525
 		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
-		write $cpubw/bw_hwmon/sample_ms 2
-		write $cpubw/bw_hwmon/bw_step 170
-		write $cpubw/bw_hwmon/io_percent 25
+		write $cpubw/bw_hwmon/sample_ms 6
+		write $cpubw/bw_hwmon/bw_step 190
+		write $cpubw/bw_hwmon/io_percent 28
 		write $cpubw/bw_hwmon/hist_memory 20
 		write $cpubw/bw_hwmon/hyst_length 10
 		write $cpubw/bw_hwmon/low_power_ceil_mbps 0
-		write $cpubw/bw_hwmon/low_power_io_percent 25
+		write $cpubw/bw_hwmon/low_power_io_percent 34
 		write $cpubw/bw_hwmon/low_power_delay 20
 		write $cpubw/bw_hwmon/guard_band_mbps 0
 		write $cpubw/bw_hwmon/up_scale 250
@@ -308,7 +308,7 @@ echo "12288,15360,18432,21504,24576,30720" > /sys/module/lowmemorykiller/paramet
 echo 32 > /sys/module/lowmemorykiller/parameters/cost
 
 # KCAL for LG G5/V20 panel
-echo "241 241 241" > /sys/devices/platform/kcal_ctrl.0/kcal
+echo "240 240 240" > /sys/devices/platform/kcal_ctrl.0/kcal
 
 # disable debugging on some modules
   echo "N" > /sys/module/kernel/parameters/initcall_debug;
