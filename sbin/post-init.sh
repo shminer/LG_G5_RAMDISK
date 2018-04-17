@@ -250,7 +250,7 @@ SET_CPUSETS() {
 	write /dev/cpuset/top-app/cpus 0-3
 	# set default schedTune value for foreground/top-app (only affects EAS)
 	write /dev/stune/foreground/schedtune.prefer_idle 1
-	write /dev/stune/schedtune.boost 5
+	write /dev/stune/schedtune.boost 10
 	write /dev/stune/schedtune.prefer_idle 1
 }
 SET_CPUSETS;
