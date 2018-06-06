@@ -262,7 +262,7 @@ CPU_BUS_DCVS() {
 		write $cpubw/polling_interval 50
 		write $cpubw/min_freq 1525
 		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
-		write $cpubw/bw_hwmon/sample_ms 6
+		write $cpubw/bw_hwmon/sample_ms 4
 		write $cpubw/bw_hwmon/bw_step 190
 		write $cpubw/bw_hwmon/io_percent 28
 		write $cpubw/bw_hwmon/hist_memory 20
@@ -283,15 +283,15 @@ echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
 echo "0" > /proc/sys/vm/panic_on_oom; # default: 0
 echo "5" > /proc/sys/kernel/panic; # default: 5
 echo "0" > /proc/sys/kernel/panic_on_oops; # default: 1
-echo "15" > /proc/sys/vm/dirty_background_ratio; # default: 5
-echo "25" > /proc/sys/vm/dirty_ratio; # default: 20
+echo "5" > /proc/sys/vm/dirty_background_ratio; # default: 5
+echo "20" > /proc/sys/vm/dirty_ratio; # default: 20
 echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
 echo "1" > /proc/sys/vm/overcommit_memory; # default: 1
 echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
 echo "0" > /proc/sys/vm/page-cluster; # default: 0
-echo "90" > /proc/sys/vm/swappiness; # default: 60
-echo "110" > /proc/sys/vm/vfs_cache_pressure; # default: 60
-echo "1300" > /proc/sys/vm/dirty_expire_centisecs; # default: 60
+echo "60" > /proc/sys/vm/swappiness; # default: 60
+echo "100" > /proc/sys/vm/vfs_cache_pressure; # default: 60
+echo "200" > /proc/sys/vm/dirty_expire_centisecs; # default: 60
 # mem calc here in pages. so 16384 x 4 = 64MB reserved for fast access by kernel and VM
 echo "32768" > /proc/sys/vm/mmap_min_addr; #default: 32768
 echo "94912" > /proc/sys/vm/min_free_kbytes;
@@ -304,8 +304,17 @@ chmod 0664 /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
 chmod 0664 /sys/module/lowmemorykiller/parameters/vmpressure_file_min
 
 # Tune LMK with values we love
-echo "12288,15360,18432,21504,24576,30720" > /sys/module/lowmemorykiller/parameters/minfree
+echo 0 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
+echo "18432,23040,27648,51256,150296,200640" > /sys/module/lowmemorykiller/parameters/minfree
+echo 81250 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
 echo 32 > /sys/module/lowmemorykiller/parameters/cost
+
+echo 1 > /sys/module/process_reclaim/parameters/enable_process_reclaim
+echo 70 > /sys/module/process_reclaim/parameters/pressure_max
+echo 30 > /sys/module/process_reclaim/parameters/swap_opt_eff
+echo 10 > /sys/module/process_reclaim/parameters/pressure_min
+echo 1024 > /sys/module/process_reclaim/parameters/per_swap_size
+
 
 # KCAL for LG G5/V20 panel
 echo "240 240 240" > /sys/devices/platform/kcal_ctrl.0/kcal
