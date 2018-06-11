@@ -75,6 +75,21 @@ if [ "$?" == 0 ];then
 	wr_alu_cpufreq 2 pump_dec_step 2
 fi
 
+wr_sched_cpufreq()
+{
+	echo ${3} > /sys/devices/system/cpu/cpu${1}/cpufreq/schedutil/${2}
+}
+grep "schedutil" /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors > /dev/null
+if [ "$?" == 0 ];then
+	chmod 0644 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+	echo "schedutil" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+	
+	wr_sched_cpufreq 0 iowait_boost_enable 0
+	wr_sched_cpufreq 2 iowait_boost_enable 0
+fi
+
 wr_alusched_cpufreq()
 {
 	echo ${3} > /sys/devices/system/cpu/cpu${1}/cpufreq/alucardsched/${2}
@@ -85,29 +100,21 @@ if [ "$?" == 0 ];then
 	chmod 0644 /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 	echo "schedalucard" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 	echo "schedalucard" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
-	wr_alusched_cpufreq 0 freq_responsiveness 1190400
-	wr_alusched_cpufreq 0 iowait_boost_enable 1
-	wr_alusched_cpufreq 0 boost_perc 0
-	wr_alusched_cpufreq 0 pump_inc_step_at_min_freq 2
-	wr_alusched_cpufreq 0 pump_inc_step 1
-	wr_alusched_cpufreq 0 pump_dec_step_at_min_freq 1
-	wr_alusched_cpufreq 0 pump_dec_step 1
-
-	wr_alusched_cpufreq 2 freq_responsiveness 1248000
-	wr_alusched_cpufreq 2 iowait_boost_enable 1
-	wr_alusched_cpufreq 2 boost_perc 0
-	wr_alusched_cpufreq 2 pump_inc_step_at_min_freq 2
-	wr_alusched_cpufreq 2 pump_inc_step 1
-	wr_alusched_cpufreq 2 pump_dec_step_at_min_freq 1
-	wr_alusched_cpufreq 2 pump_dec_step 1
+	
+	wr_alusched_cpufreq 0 iowait_boost_enable 0
+	wr_alusched_cpufreq 2 iowait_boost_enable 0
 fi
+
 #set default governor
-	echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	echo "schedutil" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+#echo "schedutil" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+#echo "schedutil" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
+
+
 # input boost 
 echo "0:1228800 2:1190400" > /sys/module/cpu_boost/parameters/input_boost_freq
 echo 950 > /sys/module/cpu_boost/parameters/input_boost_ms
 echo 500 > /sys/module/cpu_boost/parameters/input_boost_off_ms
+echo 10 >/sys/module/cpu_boost/parameters/dynamic_stune_boost
 
 # from Eliminater74
 function write() {
@@ -244,16 +251,39 @@ SET_CPUSETS() {
 	# Update foreground and background cpusets
 	write /dev/cpuset/foreground/cpus 0-3
 	write /dev/cpuset/foreground/boost/cpus 0-3
-	write /dev/cpuset/background/cpus 0-1
+	write /dev/cpuset/background/cpus 0-3
 	write /dev/cpuset/camera-daemon/cpus 0-3
-	write /dev/cpuset/system-background/cpus 0-1
+	write /dev/cpuset/system-background/cpus 0-3
 	write /dev/cpuset/top-app/cpus 0-3
-	# set default schedTune value for foreground/top-app (only affects EAS)
-	write /dev/stune/foreground/schedtune.prefer_idle 1
-	write /dev/stune/schedtune.boost 10
-	write /dev/stune/schedtune.prefer_idle 1
+	write /dev/cpuset/major/cpus 0-3
 }
 SET_CPUSETS;
+
+EAS_TWEAK() {
+TA_BOOST='10'
+TA_PREF_IDLE='1'
+FG_BOOST='0'
+FG_PREF_IDLE='1'
+BG_BOOST='0'
+BG_PREF_IDLE='0'
+GEN_BOOST='0'
+GEN_PREF_IDLE='0'
+
+local STUNE='/dev/stune'
+
+echo "${TA_BOOST}" > ${STUNE}/top-app/schedtune.boost
+echo "${TA_PREF_IDLE}" > ${STUNE}/top-app/schedtune.prefer_idle
+
+echo "${FG_BOOST}" > ${STUNE}/foreground/schedtune.boost
+echo "${FG_PREF_IDLE}" > ${STUNE}/foreground/schedtune.prefer_idle
+
+echo "${BG_BOOST}" > ${STUNE}/background/schedtune.boost
+echo "${BG_PREF_IDLE}" > ${STUNE}/background/schedtune.prefer_idle
+
+echo "${GEN_BOOST}" > ${STUNE}/schedtune.boost
+echo "${GEN_PREF_IDLE}" > ${STUNE}/schedtune.prefer_idle
+}
+EAS_TWEAK;
 
 CPU_BUS_DCVS() {
 	# Enable bus-dcvs
