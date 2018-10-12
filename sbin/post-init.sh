@@ -76,8 +76,8 @@ if [ "$?" == 0 ];then
 fi
 
 # input boost 
-echo "0:1190400 2:0" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo "0:1190400 2:0" > /sys/module/cpu_boost/parameters/input_boost_freq
+echo "0:1190400 2:1036800" > /sys/module/cpu_boost/parameters/multi_boost_freq
+echo "0:1190400 2:1036800" > /sys/module/cpu_boost/parameters/input_boost_freq
 echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
 echo 1 > /sys/module/cpu_boost/parameters/sched_boost_on_input
 
@@ -152,11 +152,11 @@ CPU_BUS_DCVS() {
 		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
 		write $cpubw/bw_hwmon/sample_ms 4
 		write $cpubw/bw_hwmon/bw_step 190
-		write $cpubw/bw_hwmon/io_percent 28
+		write $cpubw/bw_hwmon/io_percent 27
 		write $cpubw/bw_hwmon/hist_memory 20
 		write $cpubw/bw_hwmon/hyst_length 10
 		write $cpubw/bw_hwmon/low_power_ceil_mbps 0
-		write $cpubw/bw_hwmon/low_power_io_percent 34
+		write $cpubw/bw_hwmon/low_power_io_percent 30
 		write $cpubw/bw_hwmon/low_power_delay 20
 		write $cpubw/bw_hwmon/guard_band_mbps 0
 		write $cpubw/bw_hwmon/up_scale 250
