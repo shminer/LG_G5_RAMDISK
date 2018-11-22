@@ -1,0 +1,151 @@
+# This file is imported by init.{ro.hardware}.rc
+
+# to override this file (device specific .rc)
+import /init.${ro.hardware}_core.rc
+
+# LGE logger service rc
+import /init.lge.log.rc
+
+# LGE FM Radio rc
+import /init.lge.fm.rc
+
+# LGE ZRAM rc
+import /init.lge.svelte.rc
+
+# ramoops backup function service
+service ramoops_backup /system/vendor/bin/ramoops_backup.sh
+    class main
+    disabled
+    oneshot
+
+# enable & disable crash handler, rtb & trace event through property
+service service-crash /system/vendor/bin/init.msm8996.crash.sh
+    class main
+    disabled
+    oneshot
+
+on property:persist.service.crash.enable=1
+    restart service-crash
+
+on property:persist.service.crash.enable=0
+    restart service-crash
+
+on property:persist.service.e76wa.enable=*
+    restart service-crash
+
+# time_in_state
+service time_in_state /system/vendor/bin/init.time_in_state.sh
+    class main
+    disabled
+    oneshot
+
+on property:init.svc.bootanim=stopped
+    start time_in_state
+    start ramoops_backup
+
+# LGE ATD
+import /init.lge.atd.rc
+
+on fs
+    mount_all fstab.${ro.hardware}
+    swapon_all fstab.${ro.hardware}
+
+    wait /dev/block/bootdevice/by-name/modem
+    mount vfat /dev/block/bootdevice/by-name/modem /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337,context=u:object_r:firmware_file:s0
+
+    # Executing tune2fs to reserve some region in /data.(40MB)
+    exec /system/bin/tune2fs -u system -r 10240 /dev/block/bootdevice/by-name/userdata
+
+# LGE_CHANGE_START
+on post-fs
+    # execute sreadahead daemon to reduce boot-time
+    start sreadahead
+    # Support tuxera exfat filesystem
+    #insmod /system/lib/modules/texfat.ko
+    insmod /system/lib/modules/exfat.ko
+# LGE_CHANGE_END
+
+on post-fs-data
+    chown system system /mpt
+    chmod 0775 /mpt
+    mkdir /persist/data 0700 system system
+    mkdir /data/ramoops 0750 root log
+
+#LGE_CHANGE_S, Advanced MOCA, huny.lee@lge.com
+service moca_service /system/bin/advanced_moca -s
+    class late_start
+    user root
+    group system sdcard_r sdcard_rw radio
+    disabled
+    oneshot
+    socket Full.MOCA.port stream 660 system system
+
+on property:persist.service.moca.enable=1
+    start moca_service
+
+on property:persist.service.moca.enable=0
+    stop moca_service
+#LGE_CHANGE_E, Advanced MOCA, huny.lee@lge.com
+
+# LGE_CHANGE_START, execute sreadahead daemon to reduce boot-time
+service sreadahead /system/vendor/bin/treadahead
+    oneshot
+    disabled
+    seclabel u:r:sreadahead:s0
+
+# make a diecision whether sreadahead would be performed or not.
+service sreadahead-check /system/vendor/bin/sreadahead_check
+    class main
+    user root
+    group root
+    oneshot
+    seclabel u:r:sreadahead-check:s0
+# LGE_CHANGE_END
+
+on property:persist.sys.emmc_size=32G
+    setprop ro.device.memory.system 0
+    setprop ro.device.memory.internal 32
+
+on property:persist.sys.emmc_size=64G
+    setprop ro.device.memory.system 0
+    setprop ro.device.memory.internal 64
+
+on property:persist.sys.emmc_size=128G
+    setprop ro.device.memory.system 0
+    setprop ro.device.memory.internal 128
+
+on property:persist.sys.emmc_size=256G
+    setprop ro.device.memory.system 0
+    setprop ro.device.memory.internal 256
+
+service set_emmc_size /vendor/bin/set_emmc_size.sh
+    class late_start
+    user root
+    group media_rw system sdcard_rw
+    oneshot
+
+# LGE - boot lockup detection
+# boot complete
+on property:sys.boot_completed=1
+    write /sys/module/lge_handle_panic/parameters/cancel_boot_lockup_detect 1
+
+# encrypting
+on property:vold.decrypt=trigger_shutdown_framework
+    write /sys/module/lge_handle_panic/parameters/pause_boot_lockup_detect 1
+
+# decrypted
+on property:vold.decrypt=trigger_reset_main
+    write /sys/module/lge_handle_panic/parameters/pause_boot_lockup_detect 0
+
+# cancel workqueue when upgrade or firstboot
+on property:sys.boot_dex_opt=1
+    write /sys/module/lge_handle_panic/parameters/cancel_boot_lockup_detect 1
+
+# enhanced reboot lockup detect (init)
+on property:sys.powerctl=*
+    write /sys/module/lge_handle_panic/parameters/powerctl_lockup_detect ${sys.powerctl}
+
+# change preload directory permission for movetosd about preload app
+service chmod_dp /system/vendor/bin/change_permission_preload.sh
+    class late_start
+    oneshot

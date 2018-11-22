@@ -1,0 +1,29 @@
+BB=/sbin/busybox;
+
+
+set_resolution()
+{
+	wm size ${1}
+	lcd_density=${2}
+	$BB sed -i -e 's/ro.sf.lcd_density=.*/ro.sf.lcd_density='${lcd_density}'/g' /system/build.prop;
+	echo "Resolution:${1} lcd_density:${2} need reboot"
+}
+
+case $1 in 
+	stock)
+	set_resolution 1440x2560 640;
+	;;	
+	stock_JZ)
+	set_resolution 1440x2560 610;
+	;;
+	stock87%)
+	set_resolution 1260x2240 570;
+	;;
+	stock80%)
+	set_resolution 1152x2048 540;
+	;;
+	get_lcd_density)
+	lcddensity=`cat /system/build.prop | grep lcd_density | sed s/ro.sf.lcd_density=//`;
+	$BB echo current lcd density：${lcddensity}
+	;;
+esac;

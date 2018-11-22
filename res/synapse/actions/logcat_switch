@@ -1,0 +1,13 @@
+BB=/sbin/busybox;
+
+if [ -e /system/bin/logd ];then
+	stop logd
+	sleep 1
+	mv /system/bin/logd /system/bin/logd.bak 2> /dev/null &
+	$BB echo "Logcat disabled"
+else
+	mv /system/bin/logd.bak /system/bin/logd 2> /dev/null &
+	sleep 1
+	start logd
+	$BB echo "Logcat enabled"
+fi

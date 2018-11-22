@@ -1,0 +1,18 @@
+#LAOP
+on post-fs
+    mkdir /persist-lg/laop 0771 system radio
+    mkdir /persist-lg/laop/property 0771 system radio
+
+# SBP 4.0
+on property:persist.sys.smartca.changed=1
+    wait /dev/block/bootdevice/by-name/OP
+    mount ext4 /dev/block/bootdevice/by-name/OP /OP rw remount nosuid nodev barrier=1 noauto_da_alloc
+    restorecon_recursive /OP
+    mkdir /OP/_SMARTCA_RES 0775 system system
+    start cota_update
+
+on property:persist.sys.smartca.changed=2
+    wait /dev/block/bootdevice/by-name/OP
+    mount ext4 /dev/block/bootdevice/by-name/OP /OP ro remount nosuid nodev barrier=1 noauto_da_alloc
+    restorecon_recursive /OP
+    start cota_update

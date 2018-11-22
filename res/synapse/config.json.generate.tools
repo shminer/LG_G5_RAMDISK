@@ -1,0 +1,74 @@
+cat << CTAG
+{
+	name:{en:"TOOLS", zh_CN:"实用工具"},
+		elements:[
+			{ SPane:{
+				title:{en:"Advanced Tools", zh_CN:"高级工具"},
+			}},
+				{ SDescription:{
+					description:{en:"Use this button to defrag/reindex all databases found in /data & /sdcard, this increases database read/write performance. NOTE: This process can take from 1-2 minutes.", zh_CN:"以下按钮将 整理/重索引 DATA 分区的数据库，提高数据读写性能，注意：此操作需时 1-2分钟."},
+				}},
+				{ SButton:{
+					label:{en:"Optimize Databases", zh_CN:"优化数据库"},
+					action:"devtools optimizedb"
+				}},
+			{ SPane:{
+				title:{en:"Log Creation", zh_CN:"保存日志"},
+			}},
+				`if [ -f "/sys/module/logger/parameters/enabled" ]; then
+				LOGMODE=\`$BB cat /sys/module/logger/parameters/enabled\`
+					$BB echo '{ SOptionList:{
+						title:"Log Mode",
+						description:"Allows you to toggle the log mode.",
+						default:'$LOGMODE',
+						action:"generic /sys/module/logger/parameters/enabled",
+						values:{
+							0:"Disabled", 1:"Enabled"
+						}
+					}},'
+				fi`
+				`if [ -f "/sys/module/logger/parameters/log_mode" ]; then
+				LOGMODE=\`$BB cat /sys/module/logger/parameters/log_mode\`
+					$BB echo '{ SOptionList:{
+						title:"Log Mode",
+						description:"Allows you to toggle the log mode.",
+						default:'$LOGMODE',
+						action:"generic /sys/module/logger/parameters/log_mode",
+						values:{
+							0:"Enabled", 1:"Auto Suspend", 2:"Disabled"
+						}
+					}},'
+				fi`
+			{ SDescription:{
+				description:{en:"To report any issue with the kernel, you should share the zip file of logs created by using below button. This will put logcat, dmesg and ramoops (last_kmsg) into one zip file which will be used only for debug purposes.", zh_CN:"要报告内核的任何问题，分享可以使用下面的按钮创建日志的zip文件。这将使logcat中，dmesg的和ramoops（last_kmsg），其中仅用于调试目的使用的一个zip文件."},
+			}},
+				{ SButton:{
+					label:{en:"Save Logs", zh_CN:"保存日志"},
+					action:"devtools alllogs"
+				}},
+			{ SPane:{
+				title:{en:"General Actions", zh_CN:"一般操作"},
+				description:{en:"To update/refresh lists, select Restart Synapse below. To clear data, select Clear Synapse Data (fixes most common issues).", zh_CN:"如果要更新文件列表，点击重启Synpase。如果程序不正常，清空Synapse数据可以修复一些未知问题."},
+			}},
+				{ SButton:{
+					label:{en:"Restart Synapse", zh_CN:"重启 Synapse"},
+					action:"restorebackup restart"
+				}},
+				{ SButton:{
+					label:{en:"Clear Synapse Data", zh_CN:"清除 Synapse 数据"},
+					action:"devtools cleardata"
+				}},
+			{ STitleBar:{
+				title:{en:"Reboot", zh_CN:"重新启动"},
+			}},
+				{ SButton:{
+					label:{en:"Reboot Device", zh_CN:"重启设备"},
+					action:"devtools reboot"
+				}},
+				{ SButton:{
+					label:{en:"Reboot to Recovery", zh_CN:"恢复模式"},
+					action:"devtools reboot recovery"
+				}},
+		]
+}
+CTAG

@@ -1,0 +1,16 @@
+BB=/sbin/busybox;
+
+PATH_MEM=/proc/sys/vm/min_free_kbytes
+
+min=`cat ${PATH_MEM}`
+if [ "${min}" -gt "94912" ];then
+	min=94912
+fi
+
+large=1650000
+
+echo ${large} > ${PATH_MEM}
+sleep 1
+echo ${min} > ${PATH_MEM}
+
+$BB echo "memory cleared"

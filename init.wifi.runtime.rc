@@ -1,0 +1,14 @@
+#Wi-Fi Runtime
+
+on post-fs-data
+     start wlan_runtime
+
+on property:wlan.start.runtime=1
+     start wlan_runtime
+
+service wlan_runtime /system/vendor/bin/wifi_runtime_conf.sh
+    class main
+    user system
+    group system wifi
+    disabled
+    oneshot

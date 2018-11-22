@@ -1,0 +1,108 @@
+cat << CTAG
+{
+	name:GPU,
+		elements:[
+			{ SPane:{
+				title:{en:"Current GPU Frequency:", zh_CN:"GPU 当前频率:"},
+			}},
+				{ SLiveLabel:{
+					refresh:1000,
+					action:"live GPUFrequency"
+				}},
+			{ SPane:{
+				title:{en:"GPU Frequency Scaling", zh_CN:"GPU 频率调节"},
+			}},
+			`if [ -f "\`sh $DEVICE DirGPUMaxFrequency\`" ]; then
+				GPUMAX=\`sh $DEVICE DirGPUMaxFrequency\`
+					$BB echo '{ SSeekBar:{
+						title:{en:"GPU Max Frequency", zh_CN:"GPU 最高频率"},
+						description:{en:"Set the maximum frequency the GPU scales up to.", zh_CN:"设定 GPU 负载时的最高工作频率."},
+						default:'\`$BB cat $GPUMAX\`',
+						action:"generic '$GPUMAX'",
+						values:{
+								0:"624Mhz",1:"560Mhz",2:"510Mhz",
+								3:"401Mhz",4:"315Mhz",5:"214Mhz",
+								6:"133Mhz"
+						}
+				}},'
+			fi`
+			`if [ -f "/sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost" ]; then
+				ADB=\`$BB cat /sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost\`
+					$BB echo '{ SSeekBar:{
+						title:{en:"Adrenoboost", zh_CN:"GPU加速"},
+						description:{en:"A simple idea to improve the adreno tz governor, thanks @flar2 and @tbalden .", zh_CN:"gpu调速器加速惰性，越小频率提升越慢，越大频率提升越快，感谢@flar2和@tbalden提供代码."},
+						min:0,
+						max:3,
+						step:1,
+						default:'\`$BB echo $ADB\`',
+						action:"generic /sys/class/devfreq/b00000.qcom,kgsl-3d0/adrenoboost",
+				}},'
+			fi`
+			`if [ -f "\`sh $DEVICE DirGPUGovernor\`" ]; then
+			GPUGOV=\`sh $DEVICE DirGPUGovernor\`
+				$BB echo '{ SPane:{
+					title:{en:"GPU Governor", zh_CN:"GPU 调速器"},
+					description:{en:"The GPU Governor makes scaling decisions based on specific algorithm for 2D/3D scenarios.", zh_CN:"GPU 调速器会根据制定的 2D/3D 互动情景去调节使用策略."},
+				}},
+					{ SOptionList:{
+						default:'\`sh $DEVICE DefaultGPUGovernor\`',
+						action:"gpuset '$GPUGOV'",
+						values:[ "msm-adreno-tz", "simple_ondemand", "powersave", "performance" ],
+					}},'
+			fi`
+			`SGA=/sys/module/msm_kgsl_core/parameters;
+			if [ -f "$SGA/simple_laziness" ] || [ -f "$SGA/simple_ramp_threshold" ] || [ -d "/sys/module/simple_gpu_algorithm/parameters" ]; then
+
+			[ -d "/sys/module/simple_gpu_algorithm/parameters" ] && SGA=/sys/module/simple_gpu_algorithm/parameters;
+			
+				$BB echo '{ SPane:{
+					title:{en:"Simple Governor Tunables", zh_CN:"简单调速器"},
+				}},'
+				if [ -f "$SGA/simple_gpu_activate" ]; then
+					SIMPLE=\`$BB cat $SGA/simple_gpu_activate\`
+					$BB echo '{ SCheckBox:{
+						label:{en:"Enable", zh_CN:"启用"},
+						default:'$SIMPLE',
+						action:"generic '$SGA'/simple_gpu_activate"
+					}},'
+				fi
+				if [ -f "$SGA/simple_laziness" ]; then
+					LAZ=\`$BB cat $SGA/simple_laziness\`
+					$BB echo '{ SSeekBar:{
+						title:{en:"Laziness", zh_CN:"积极性"},
+						description:{en:"Adjusts the number of times the governor skips ramp down requests. Higher = better performance (more battery drain).", zh_CN:"调节调速器忽略降速请求的次数，数值越低性能越好，同时电池续航越短."},
+						default:'$LAZ',
+						action:"generic '$SGA'/simple_laziness",
+						min:0,
+						max:10,
+						step:1
+					}},'
+				fi
+				if [ -f "$SGA/simple_ramp_threshold" ]; then
+					RAMP=\`$BB cat $SGA/simple_ramp_threshold\`
+					$BB echo '{ SSeekBar:{
+						title:{en:"Ramp Threshold", zh_CN:"频率阈值"},
+						description:{en:"Adjusts the threshold to ramp up or down GPU frequencies. Lower = better performance (more battery drain).", zh_CN:"调节控制 GPU 频率升降的阈值，数值越低性能越好，同时电池续航越短."},
+						default:'$RAMP',
+						action:"generic '$SGA'/simple_ramp_threshold",
+						min:0,
+						max:10000,
+						step:1000
+					}},'
+				fi
+			fi`
+			`if [ -f "/sys/module/adreno_idler/parameters/adreno_idler_active" ]; then
+				AD=\`bool /sys/module/adreno_idler/parameters/adreno_idler_active\`
+				$BB echo '{ SPane:{
+				title:"Adreno Idler"
+				}},
+					{ SCheckBox:{
+						label:{en:"Enable Adreno Idler (Experimental)", zh_CN:"启用Adreno实验性"},
+						description:{en:"Adreno idler replaces GPU algorithm for calculating idle frequency. It bumps GPU to idle frequency when GPU is not under high load and reduces power consumption.", zh_CN:"MSM Adreno TZ GPU 调速器附加的设置。由 arter97 提供.},
+						default:'$AD',
+						action:"boolean /sys/module/adreno_idler/parameters/adreno_idler_active"
+					}},'
+			fi`
+		]
+}
+CTAG

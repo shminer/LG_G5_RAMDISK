@@ -1,0 +1,9 @@
+# This file is start jz script
+
+on post-fs-data
+service qcom-post-boot /sbin/busybox sh /sbin/post-init.sh
+    class late_start
+    user root
+    seclabel u:r:init:s0
+    disabled
+    oneshot

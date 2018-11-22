@@ -1,0 +1,15 @@
+cat << CTAG
+{
+		name:{en:"JZ KERNEL PAGE", zh_CN:"JZ内核页面"},
+			elements:[
+				{ SPane:{
+					title:"Linux version  JZ kernel version `busybox expr substr $(cat /cur_ver) 1 1`.`busybox expr substr  $(cat /cur_ver) 2 1`",
+					description:"`$BB cat /proc/version`"
+				}},
+				{ SPane:{
+					title:{en:"Donate to me", zh_CN:"捐助"},
+					description:{en:"<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VYRQCJCXTS4JC'>Donating via PayPal</a>  Or  Use Alipay: 332574643@qq.com", zh_CN:"国外:<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VYRQCJCXTS4JC'>通过PayPal捐助</a>国内:支付宝: 332574643@qq.com"}
+				}},
+			]
+}
+CTAG

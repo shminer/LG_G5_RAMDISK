@@ -1,0 +1,152 @@
+cat << CTAG
+{
+	name:{en:"CPU VOLT", zh_CN:"CPU电压设置"},
+		elements:[
+			`if [ -f "/sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels" ]; then
+				$BB echo '{ STitleBar:{
+					title:{en:"CPU Global Voltage", zh_CN:"CPU全局电压调整"},
+				}},
+					{ SSeekBar:{
+						default:0,
+						action:"cpuvolt global",
+						unit:" uV",
+						min:-300000,
+						max:300000,
+						step:5000,
+						notify:[
+							{
+								on:APPLY,
+								do:[ REFRESH, APPLY ],
+								to:['
+									while read CPUFREQ VOLT; do
+									CPUFREQ=\`$BB echo $CPUFREQ | sed "s/://"\`;
+										echo '"cpuvolt '$CPUFREQ'",';
+									done < /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels;
+								$BB echo ']
+							}
+						]
+					}},'
+			fi`
+			`if [ -f "/sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels" ]; then
+				$BB echo '{ SPane:{
+					title:{en:"CPU Frequency Voltage", zh_CN:"CPU频率电压调整"},
+					description:{en:"Decreasing voltages will lower heat and power consumption of the CPU. Increasing it on overclocked frequencies improves stability. Too low voltages may cause instability and freezes.", zh_CN:"降低CPU电压可以减少发热和省电. 太低的电压会导致系统运行不稳定,当超频时则需要升高相应频率的电压."}
+				}},'
+					while read CPUFREQ VOLT; do
+					CPUFREQ=\`$BB echo $CPUFREQ | $BB sed "s/://"\`
+					LABEL=$((CPUFREQ / 1000))
+						$BB echo '{ SSeekBar:{
+								title:"'${LABEL}' MHz",
+								default:'$VOLT',
+								action:"cpuvolt '$CPUFREQ'",
+								unit:" uV",
+								min:700000,
+								max:1225000,
+								step:500
+							}},'
+						done < /sys/devices/system/cpu/cpufreq/vdd_table/vdd_levels
+			fi`
+			`if [ -f "/sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table" ]; then
+				$BB echo '{ SLiveLabel:{
+						title:{en:"Your PVS Bin is", zh_CN:"PVS处理器电压换算值"},
+						refresh:0,
+						action:"live PVSbin"
+				}},
+					{ STitleBar:{
+					title:{en:"CPU Global Voltage", zh_CN:"CPU全局电压调整"},
+				}},
+					{ SSeekBar:{
+						default:0,
+						action:"voltage cpuvoltglobal global",
+						description:{en:"Voltages are already set at their optimum values by default. DO NOT REPORT any random reboot or issue if you change CPU volt across any frequency.", zh_CN:"电压已经被自动设置成优化值.如果你修改了电压，之后遇到莫名重启等症状，不要说我的内核有问题."},
+						unit:" mV",
+						min:-300,
+						max:300,
+						step:5,
+						notify:[
+							{
+								on:APPLY,
+								do:[ REFRESH, APPLY ],
+								to:['
+									while read CPUFREQ VOLT UNIT; do
+										$BB echo '"voltage cpuvolt '$CPUFREQ'",';
+									done < /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table;
+								$BB echo ']
+							}
+						]
+					}},'
+			fi`
+			`if [ -f "/sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table" ]; then
+				$BB echo '{ SPane:{
+					title:{en:"CPU Frequency Voltage", zh_CN:"CPU频率电压调整"},
+					description:{en:"Decreasing voltages will lower heat and power consumption of the CPU. Increasing it on overclocked frequencies improves stability. Too low voltages may cause instability and freezes.", zh_CN:"降低CPU电压可以减少发热和省电. 太低的电压会导致系统运行不稳定,当超频时则需要升高相应频率的电压."},
+				}},'
+					while read CPUFREQ VOLT UNIT; do
+						$BB echo '{ SSeekBar:{
+							title:"'${CPUFREQ//mhz\:/}' MHz",
+							unit:"' ${UNIT}'",
+							min:600,
+							max:1400,
+							step:1,
+							default:'$VOLT',
+							action:"voltage cpuvolt '${CPUFREQ}'"
+						}},
+						';
+							done < /sys/devices/system/cpu/cpu0/cpufreq/UV_mV_table;
+			fi`
+			`if [ -f "/sys/module/acpuclock_krait/parameters/boost" ] && [ -f "/sys/module/acpuclock_krait/parameters/higher_khz_thres" ]; then
+			GBOOST=\`bool /sys/module/acpuclock_krait/parameters/boost\`
+				$BB echo '{ SPane:{
+					title:{en:"Boost Voltage", zh_CN:"升压选项"},
+				}},
+					{ SCheckBox:{
+						label:"Enable",
+						description:{en:"If this is enabled, a 25 mV over-volt will be applied.", zh_CN:"如果这个选项被使能,将额外增加25 mV电压."},
+						default:'$GBOOST',
+						action:"boolean /sys/module/acpuclock_krait/parameters/boost"
+					}},'
+				if [ -f "/sys/module/acpuclock_krait/parameters/higher_khz_thres" ]; then
+				HTHRES=\`$BB cat /sys/module/acpuclock_krait/parameters/higher_khz_thres\`
+					$BB echo '{ SPane:{
+						title:{en:"Settings", zh_CN:"设置选项"},
+					}},
+					{ SSeekBar:{
+						title:{en:"Higher Frequency UV", zh_CN:"高频降压"},
+						description:{en:"Above this frequency the Higher uV will be used, else Lower uV will be used.", zh_CN:"当高于此频率时，较高的UV将被使用, 否则使用较低的UV."},
+						default:'$HTHRES',
+						action:"generic /sys/module/acpuclock_krait/parameters/higher_khz_thres",
+						values:{'
+							sh $DEVICE CPUFrequencyList
+						$BB echo '}
+					}},'
+				fi
+				if [ -f "/sys/module/acpuclock_krait/parameters/lower_uV" ]; then
+				LUV=\`$BB cat /sys/module/acpuclock_krait/parameters/lower_uV\`
+					$BB echo '{ SSeekBar:{
+						title:{en:"Lower uV", zh_CN:"较低的UV"},
+						description:{en:"Undervolting value for lower frequencies.", zh_CN:"较低频率的降压值."},
+							unit:" uV",
+							min:0,
+							max:300000,
+							step:25000,
+						default:'$LUV',
+						action:"generic /sys/module/acpuclock_krait/parameters/lower_uV",
+					}},'
+				fi
+				if [ -f "/sys/module/acpuclock_krait/parameters/higher_uV" ]; then
+				HUV=\`$BB cat /sys/module/acpuclock_krait/parameters/higher_uV\`
+					$BB echo '{ SSeekBar:{
+						title:{en:"Lower uV", zh_CN:"较高的UV"},
+						description:{en:"Undervolting value for lower frequencies.", zh_CN:"较高频率的降压值."},
+							unit:" uV",
+							min:0,
+							max:300000,
+							step:25000,
+						default:'$HUV',
+						action:"generic /sys/module/acpuclock_krait/parameters/higher_uV",
+					}},'
+				fi
+			fi`
+		]
+}
+CTAG

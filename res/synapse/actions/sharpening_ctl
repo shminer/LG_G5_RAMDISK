@@ -1,0 +1,18 @@
+BB=/sbin/busybox;
+
+if [ ! -d  /data/.jz_sy ];then
+	mkdir /data/.jz_sy
+fi
+
+if [ ! -e /data/.jz_sy/sharpening ];then
+	touch /data/.jz_sy/sharpening;
+	echo `cat /sys/devices/virtual/panel/img_tune/sharpness` > /data/.jz_sy/sharpening;
+fi
+
+if [ -f $1 ];then
+	if [[ ! -z $2 ]]; then
+		echo $2 > /data/.jz_sy/sharpening;
+		echo $2 > $1;
+	fi
+	echo `cat $1`;
+fi

@@ -1,0 +1,52 @@
+#!/sbin/busybox sh
+
+cat << CTAG
+{
+	name:{en:"SYSTEM STATUS", zh_CN:"系统状态"},
+		elements:[
+			{ SPane:{
+				title:{en:"System information", zh_CN:"系统信息:"},
+			}},
+			{ SLiveLabel:{
+					title:{en:"CPU frequency information", zh_CN:"频率信息:"},
+					refresh:2000,
+					action:"live CPU_MAX_MIN_Freq"
+			}},
+			{ SLiveLabel:{
+					title: {en:"Current CPU frequency", zh_CN:"当前频率:"},
+					refresh:2000,
+					action:"live CPU_CUR_Freq"
+			}},
+			{ SLiveLabel:{
+				title:{en:"Current CPU governor", zh_CN:"当前调速器:"},
+				refresh:8000,
+				action:"live DefaultCPUGovernor"
+			}},
+			{ SLiveLabel:{
+				title:{en:"CPU temperature:", zh_CN:"CPU温度:"},
+				refresh:3000,
+				action:"live CPUTemperature"
+			}},
+			{ SLiveLabel:{
+				title:{en:"Battery States:",zh_CN:"电池状态:"},
+				refresh:3000,
+				action:"live LiveCharge_State"
+			}},
+			{ SLiveLabel:{
+				title:{en:"USB States:",zh_CN:"USB状态:"},
+				refresh:3000,
+				action:"live LiveUSB_State"
+			}},
+			{ SLiveLabel:{
+				title:{en:"Memory status:",zh_CN:"内存状态:"},
+				refresh:3000,
+				action:"live Memory"
+			}},
+			{ SLiveLabel:{
+				title:{en:"UP times:",zh_CN:"使用时间:"},
+				refresh:5000,
+				action:"live UpTime"
+			}},
+		]
+}
+CTAG

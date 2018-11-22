@@ -1,0 +1,200 @@
+cat << CTAG
+{
+    name:CPU THERMAL,
+		elements:[
+			`[ -d "/sys/module/msm_thermal" ] && MSMTHERMAL=/sys/module/msm_thermal;
+			if [ -d "$MSMTHERMAL/parameters" ]; then
+				$BB echo '	{ SPane:{
+					title:"Thermal-engine",
+				}},
+				{ SDescription:{
+				description:"Qualcomm Thermal-engine as a system service runs in the system process to control cpu gpu dsp and backlight brightness. when the temperature is too high, Qualcomm thermal-engine can effectively control the overall temperature. JZ kernel disabled thermal-engine cpu control, so we need intellit thermal."
+					}}
+				{ SCheckBox:{
+						label:"Enable Thermal-engine",
+						action:"intellithermal thermalserver"
+					}},'
+				if [ -f "$MSMTHERMAL/parameters/thermal_debug_mode" ]; then
+				TDM=\`$BB cat $MSMTHERMAL/parameters/thermal_debug_mode\`;
+					$BB echo '{ SCheckBox:{
+							label:"Thermal debug",
+							default:'$TDM',
+							action:"generic '$MSMTHERMAL'/parameters/thermal_debug_mode"
+						}},'
+				fi	
+				if [ -f "$MSMTHERMAL/parameters/poll_ms" ]; then
+				PMS=\`$BB cat $MSMTHERMAL/parameters/poll_ms\`;
+					$BB echo '{ SSeekBar:{
+						title:"Temp Pull Timer",
+						description:"Set the Temp Pull Timer intervals. The lower value, the more often kernel will check up the CPU temp.",
+						unit:" ms",
+						step:10,
+						min:0,
+						max:3000,
+						default:'$PMS',
+						action:"generic '$MSMTHERMAL'/parameters/poll_ms"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/sensor_id" ]; then
+				SID=\`$BB cat $MSMTHERMAL/parameters/sensor_id\`;
+					$BB echo ' { SLiveLabel:{
+						title:"CPU temperature",
+						refresh:1000,
+						action:"live Thermalzone"
+					}},
+					{	SSeekBar:{
+						title:"Thermal sensor",
+						description:"Select a sensor for thermal samples temperature data, 0 is cpu cover sensor, 5-8 is four core sensor(5-core0, 6-core1, 7-core2, 8-core3).",
+						action:"generic '$MSMTHERMAL'/parameters/sensor_id",
+						values:[
+							0, 5, 6, 7, 8,
+						]
+					}},'
+				fi
+				$BB echo ','
+				if [ -f "$MSMTHERMAL/parameters/limit_temp_degC" ]; then
+				LT=\`$BB cat $MSMTHERMAL/parameters/limit_temp_degC\`
+					$BB echo '{ SPane:{
+					title:"Thermal control",
+					}},
+					{ SDescription:{
+					description:"WARNING!! JZ kernel has a different intelli thermal, There are two values for frequency control. The limit temp is the temp when thermal start to work, The CPU Max Heat will trigger thermal decrease to the lowest frequency (limit low). Logic: when Thermal trigger value tiggered, thermal will detect temperature changes, if the temp increased, kernel will decrease frequency one step(check frequency list) and if the temp not changed, kernel will keep this frequency until temp increase, if the temp decrease(last sensor temp - Temperature Hysteresis), the kernel will increase frequency one step. if the temp increase to CPU Max Heat, The kernel will decrease the frequency to limit-low option."
+					}},
+					{ SSeekBar:{
+						title:"limit temp",
+						description:"When temperature reaches defined value, thermal start to work.",
+						unit:"ºC",
+						step:1,
+						min:40,
+						max:110,
+						default:'$LT',
+						action:"generic '$MSMTHERMAL'/parameters/limit_temp_degC"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/temp_safety" ]; then
+				TS=\`$BB cat $MSMTHERMAL/parameters/temp_safety\`;
+					$BB echo '{ SCheckBox:{
+						label:"Temp safety",
+						description:"The thermal trigger value will not over 85°.",
+						default:'$TS',
+						action:"generic '$MSMTHERMAL'/parameters/temp_safety"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/limit_safe_temp_degC" ]; then
+				LST=\`$BB cat $MSMTHERMAL/parameters/limit_safe_temp_degC\`
+					$BB echo '{ SSeekBar:{
+						title:"CPU Max Heat",
+						description:"When thermal triggered, thermal will decrease the frequency step by step.",
+						unit:"ºC",
+						step:1,
+						min:40,
+						max:110,
+						default:'$LST',
+						action:"generic '$MSMTHERMAL'/parameters/limit_safe_temp_degC"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/temp_hysteresis_degC" ]; then
+				TH=\`$BB cat $MSMTHERMAL/parameters/temp_hysteresis_degC\`;
+					$BB echo '{ SSeekBar:{
+						title:"Temperature Hysteresis",
+						description:"The kernel will increase frequency when last temp - temperature hysteresis.",
+						unit:"ºC",
+						step:1,
+						min:0,
+						max:20,
+						default:'$TH',
+						action:"generic '$MSMTHERMAL'/parameters/temp_hysteresis_degC"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/freq_control_mask" ]; then
+					$BB echo '{ SDescription:{
+						description:"Frequency Throttling Cores:"
+					}},
+					{ SDescription:{
+						description:"Cores to throttle frequency when temperature limit is reached."
+					}}
+					{ SCheckBox:{
+						label:"core 0",
+						action:"intellithermal freq core0"
+					}},
+					{ SCheckBox:{
+						label:"core 1",
+						action:"intellithermal freq core1"
+					}},
+					{ SCheckBox:{
+						label:"core 2",
+						action:"intellithermal freq core2"
+					}},
+					{ SCheckBox:{
+						label:"core 3",
+						action:"intellithermal freq core3"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/freq_step" ]; then
+				FS=\`$BB cat $MSMTHERMAL/parameters/freq_step\`;
+					$BB echo '{ SSeekBar:{
+						title:"Frequency step",
+						description:"The frequency decrease step(e.g one step: 2649Mhz >> 2560Mhz).",
+						step:1,
+						min:1,
+						max:10,
+						default:'$FS',
+						action:"generic '$MSMTHERMAL'/parameters/freq_step"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/thermal_limit_low" ]; then
+				TLL=\`$BB cat $MSMTHERMAL/parameters/thermal_limit_low\`;
+					$BB echo '{ SSeekBar:{
+						title:"limit low",
+						description:"This is lowest frequency, 0 >> 268Mhz, 20 >> 2880Mhz, default is 10(1497Mhz)",
+						step:1,
+						min:1,
+						max:20,
+						default:'$TLL',
+						action:"generic '$MSMTHERMAL'/parameters/thermal_limit_low"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/core_limit_temp_degC" ]; then
+				CLT=\`$BB cat $MSMTHERMAL/parameters/core_limit_temp_degC\`;
+					$BB echo '{ SPane:{
+					title:"Core thermal control",
+					}},
+					{ SSeekBar:{
+						title:"Core max heat",
+						description:"Set the HotPlug Maximum Core Temperature. When temperature reaches defined value, it turns cores OFF from 4 to (set in Max ONLINE CORE option) in order to cool down the device..",
+						unit:"ºC",
+						step:1,
+						min:50,
+						max:110,
+						default:'$CLT',
+						action:"generic '$MSMTHERMAL'/parameters/core_limit_temp_degC"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/core_temp_hysteresis_degC" ]; then
+				CTHG=\`$BB cat $MSMTHERMAL/parameters/core_temp_hysteresis_degC\`;
+					$BB echo '	{ SSeekBar:{
+						title:"Core Temperature Hysteresis",
+						description:"Adjust the Core HotPlug Temperature Hysteresis Driver by calculating temperature differences and switching cores ON/OFF. Cores can be brought online if needed. Works only with Intelli CPU Cores Control.",
+						unit:"ºC",
+						step:1,
+						min:0,
+						max:20,
+						default:'$CTHG',
+						action:"generic '$MSMTHERMAL'/parameters/core_temp_hysteresis_degC"
+					}},'
+				fi
+				if [ -f "$MSMTHERMAL/parameters/core_control_mask" ]; then
+				CCM=\`$BB cat $MSMTHERMAL/parameters/core_control_mask\`;
+					$BB echo '	{	SSeekBar:{
+						title:"Core keep",
+						description:"When Core max heat tiggered, thermal will keep some core in your option",
+						action:"generic '$MSMTHERMAL'/parameters/core_control_mask",
+						values:{
+							0:"All Core active",  8:"Turn off 1", 12:"Turn off 2", 14:"Turn off 3"
+						}
+					}},'
+				fi
+			fi`
+		]
+}
+CTAG

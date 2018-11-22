@@ -1,0 +1,57 @@
+cat << CTAG
+{
+	name:{en:"SOUND", zh_CN:"声音控制"},
+		elements:[
+			`[ -d "/sys/class/misc/soundcontrol" ] && SC=/sys/class/misc/soundcontrol;
+			[ -d "/sys/devices/virtual/misc/soundcontrol" ] && SC=/sys/devices/virtual/misc/soundcontrol;
+			if [ -f "$SC/volume_boost" ]; then
+				MB=\`$BB cat $SC/mic_boost\`;
+				SB=\`$BB cat $SC/speaker_boost\`;
+				VB=\`$BB cat $SC/volume_boost\`;
+				VB=\`$BB cat $SC/cam_mic_boost\`;
+				$BB echo '{ SPane:{
+					title:{en:"Sound Control", zh_CN:"声音控制"},
+				}},
+					{ SSeekBar:{
+						title:{en:"Microphone Boost", zh_CN:"麦克风增益"},
+						min:-10,
+						max:10,
+						default:'$MB',
+						action:"generic '$SC'/mic_boost",
+					}},
+					{ SSeekBar:{
+						title:{en:"Camera Microphone Boost", zh_CN:"相机麦克风增益"},
+						min:-10,
+						max:10,
+						default:'$MB',
+						action:"generic '$SC'/cam_mic_boost",
+					}},
+					{ SSeekBar:{
+						title:{en:"Speaker Boost", zh_CN:"外放增益"},
+						min:-10,
+						max:10,
+						default:'$SB',
+						action:"generic '$SC'/speaker_boost",
+					}},
+					{ SSeekBar:{
+						title:{en:"Headphones Boost", zh_CN:"耳机增益"},
+						min:-20,
+						max:20,
+						action:"soundcontrol '$SC'/volume_boost",
+					}},'
+				if [ -f "$SC/highperf_enabled" ]; then
+				HPE=\`$BB cat $SC/highperf_enabled\`;
+					$BB echo '{ SPane:{
+					title:"High performance",
+					description:"Class AB mode for headphone 192Khz playback.",
+				}},
+					{ SCheckBox:{
+						label:"Enable",
+						default:'$HPE',
+						action:"generic '$SC'/highperf_enabled",
+					}},'
+				fi
+			fi`
+		]
+}
+CTAG
