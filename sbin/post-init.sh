@@ -76,10 +76,10 @@ if [ "$?" == 0 ];then
 fi
 
 # input boost 
-echo "0:1190400 2:1036800" > /sys/module/cpu_boost/parameters/multi_boost_freq
-echo "0:1190400 2:1036800" > /sys/module/cpu_boost/parameters/input_boost_freq
+echo "0:960000 2:1036800" > /sys/module/cpu_boost/parameters/multi_boost_freq
+echo "0:960000 2:1036800" > /sys/module/cpu_boost/parameters/input_boost_freq
 echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
-echo 1 > /sys/module/cpu_boost/parameters/sched_boost_on_input
+# echo 1 > /sys/module/cpu_boost/parameters/sched_boost_on_input
 
 function write() {
    $BB echo -n "$2" > "$1"
@@ -152,11 +152,11 @@ CPU_BUS_DCVS() {
 		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
 		write $cpubw/bw_hwmon/sample_ms 4
 		write $cpubw/bw_hwmon/bw_step 190
-		write $cpubw/bw_hwmon/io_percent 27
+		write $cpubw/bw_hwmon/io_percent 30
 		write $cpubw/bw_hwmon/hist_memory 20
 		write $cpubw/bw_hwmon/hyst_length 10
 		write $cpubw/bw_hwmon/low_power_ceil_mbps 0
-		write $cpubw/bw_hwmon/low_power_io_percent 30
+		write $cpubw/bw_hwmon/low_power_io_percent 34
 		write $cpubw/bw_hwmon/low_power_delay 20
 		write $cpubw/bw_hwmon/guard_band_mbps 0
 		write $cpubw/bw_hwmon/up_scale 250
@@ -165,44 +165,6 @@ CPU_BUS_DCVS() {
 
 }
 CPU_BUS_DCVS;
-
-# Kernel tweak
-echo "0" > /proc/sys/vm/oom_kill_allocating_task; # default: 0
-echo "0" > /proc/sys/vm/panic_on_oom; # default: 0
-echo "5" > /proc/sys/kernel/panic; # default: 5
-echo "0" > /proc/sys/kernel/panic_on_oops; # default: 1
-echo "5" > /proc/sys/vm/dirty_background_ratio; # default: 5
-echo "20" > /proc/sys/vm/dirty_ratio; # default: 20
-echo "4" > /proc/sys/vm/min_free_order_shift; # default: 4
-echo "1" > /proc/sys/vm/overcommit_memory; # default: 1
-echo "50" > /proc/sys/vm/overcommit_ratio; # default: 50
-echo "0" > /proc/sys/vm/page-cluster; # default: 0
-echo "60" > /proc/sys/vm/swappiness; # default: 60
-echo "100" > /proc/sys/vm/vfs_cache_pressure; # default: 60
-echo "200" > /proc/sys/vm/dirty_expire_centisecs; # default: 60
-# mem calc here in pages. so 16384 x 4 = 64MB reserved for fast access by kernel and VM
-echo "32768" > /proc/sys/vm/mmap_min_addr; #default: 32768
-echo "94912" > /proc/sys/vm/min_free_kbytes;
-
-# Permissions for LMK
-chmod 0664 /sys/module/lowmemorykiller/parameters/adj
-chmod 0664 /sys/module/lowmemorykiller/parameters/minfree
-chmod 0664 /sys/module/lowmemorykiller/parameters/cost
-chmod 0664 /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
-chmod 0664 /sys/module/lowmemorykiller/parameters/vmpressure_file_min
-
-# Tune LMK with values we love
-echo 0 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
-echo "18432,23040,27648,51256,150296,200640" > /sys/module/lowmemorykiller/parameters/minfree
-echo 81250 > /sys/module/lowmemorykiller/parameters/vmpressure_file_min
-echo 32 > /sys/module/lowmemorykiller/parameters/cost
-
-echo 1 > /sys/module/process_reclaim/parameters/enable_process_reclaim
-echo 70 > /sys/module/process_reclaim/parameters/pressure_max
-echo 30 > /sys/module/process_reclaim/parameters/swap_opt_eff
-echo 10 > /sys/module/process_reclaim/parameters/pressure_min
-echo 1024 > /sys/module/process_reclaim/parameters/per_swap_size
-
 
 # KCAL for LG G5/V20 panel
 echo "240 240 240" > /sys/devices/platform/kcal_ctrl.0/kcal
@@ -228,6 +190,15 @@ if [ -e /system/bin/triton ]; then
 	/system/bin/stop triton
 fi;
 
+if [ -e /root/rctd ]; then
+	$BB rm /root/rctd
+fi;
+
+if [ -e /sbin/rctd ]; then
+	$BB rm /sbin/rctd
+fi;
+
+/system/bin/stop rctd
 # Stop LG logging to /data/logger/$FILE we dont need that. draning power.
 setprop persist.service.events.enable 0
 setprop persist.service.main.enable 0
