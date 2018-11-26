@@ -1,11 +1,11 @@
 # This file will be installed as /init.{ro.hardware}.rc
-import /init.qcom.rc
+# import /init.qcom.rc
 import /vendor/etc/init/hw/init.qcom.rc
 
 # to override init.qcom.rc and init.target.rc
 import /vendor/etc/init/hw/init.lge.usb.rc
 import /vendor/etc/init/hw/init.lge.usb.configfs.rc
-import /init.lge.usb.rc
+# import /init.lge.usb.rc
 import /init.lge.fs.rc
 import /init.lge.ima.rc
 import /init.${ro.hardware}.power.rc

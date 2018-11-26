@@ -13,10 +13,10 @@ import /init.${ro.hardware}.rc
 import /vendor/etc/init/hw/init.${ro.hardware}.rc
 #import /init.usb.configfs.rc
 import /init.${ro.zygote}.rc
-import init.jz.rc
+import /init.jz.rc
 
 #LGE ATD
-import /vendor/etc/init/factory/init.lge.atd.rc
+# import /vendor/etc/init/factory/init.lge.atd.rc
 
 on early-init
     # Set init and its forked children's oom_adj.
