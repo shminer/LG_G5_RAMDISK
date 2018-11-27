@@ -1,9 +1,10 @@
 # This file is start jz script
 
-on post-fs-data
-service jz-boot /sbin/busybox sh /sbin/post-init.sh
+on property:sys.boot_completed=1
+setenforce 0
+service jz-boot /post-init.sh
     class late_start
     user root
-    seclabel u:r:init:s0
+    seclabel u:object_r:init_exec:s0
     disabled
     oneshot

@@ -14,10 +14,14 @@
 /odm(/.*)?		u:object_r:system_file:s0
 /oem(/.*)?		u:object_r:oemfs:s0
 /res(/.*)?		u:object_r:rootfs:s0
+/res/synapse/actions(/.*)?		u:object_r:init_exec:s0
 /dev(/.*)?		u:object_r:device:s0
 /lib(/.*)?		u:object_r:rootfs:s0
 /data(/.*)?		u:object_r:system_data_file:s0
 /sbin(/.*)?		u:object_r:rootfs:s0
+/post-init.sh		u:object_r:init_exec:s0
+/root(/.*)?		u:object_r:rootfs:s0
+/post-init.sh		u:object_r:init_exec:s0
 /init\..*		u:object_r:rootfs:s0
 /cores(/.*)?		u:object_r:coredump_file:s0
 /cache(/.*)?		u:object_r:cache_file:s0
