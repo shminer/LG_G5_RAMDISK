@@ -2,21 +2,25 @@
 
 BB=/sbin/busybox;
 
+# Make tmp folder
+mkdir /tmp;
+
+chmod 755 /system/etc/init.d/*
+$BB run-parts /system/etc/init.d/
+
 CRITICAL_PERM_FIX()
 {
 	# critical Permissions fix
-	$BB chown -R root:root /tmp;
-	$BB chown -R root:root /res;
-	# $BB chown -R root:root /sbin;
-	# $BB chown -R root:root /lib;
+	chown -R root:root /tmp;
+	chown -R root:root /res;
+	chown -R root:root /sbin;
+	#chown -R root:root /lib;
 	$BB chmod -R 777 /tmp/;
 	$BB chmod -R 775 /res/;
-	# $BB chmod -R 06755 /sbin/ext/;
-	$BB chmod 06755 /sbin/busybox;
-	#$BB chmod 06755 /system/xbin/busybox;
-	$BB chmod 0555 /system/xbin/busybox;
+	chmod 755 /sbin/busybox;
+	chmod 755 /root/busybox;
 }
-# CRITICAL_PERM_FIX;
+CRITICAL_PERM_FIX;
 
 setenforce 0
 
@@ -247,23 +251,17 @@ if [ ! -d /system/etc/init.d ]; then
 	mkdir /system/etc/init.d;
 fi
 
-chmod 755 /system/etc/init.d/*
-$BB run-parts /system/etc/init.d/
-
-# Make tmp folder
-mkdir /tmp;
-
 # Give permissions to execute
 chown -R root:system /tmp/;
 chmod -R 777 /tmp/;
 chmod -R 777 /res/;
 chmod 6755 /res/synapse/actions/*;
 chmod 6755 /sbin/*;
-chmod 6755 /system/xbin/*;
+# chmod 6755 /system/xbin/*;
 echo "Boot initiated on $(date)" > /tmp/bootcheck;
 
 chmod +x /res/synapse/uci
-ln -s /res/synapse/uci /sbin/uci
+/res/synapse/uci
 
 echo "768" > /proc/sys/kernel/random/read_wakeup_threshold;
 echo "256" > /proc/sys/kernel/random/write_wakeup_threshold;

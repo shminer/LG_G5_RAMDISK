@@ -1,10 +1,14 @@
 # This file is start jz script
 
-on property:sys.boot_completed=1
 setenforce 0
+
 service jz-boot /post-init.sh
     class late_start
     user root
     seclabel u:object_r:init_exec:s0
     disabled
     oneshot
+
+on property:sys.boot_completed=1
+ write /sys/fs/selinux/enforce 0
+ start jz-boot

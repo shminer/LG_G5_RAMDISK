@@ -16,16 +16,6 @@ cat << CTAG
 			{ STitleBar:{
 				title:"Sharpen control",
 			}},
-			{ SSeekBar:{
-					title:{en:"Sharpen value control", zh_CN:"屏幕锐化调整"},
-					description:{en:"Realtime shapen control.", zh_CN:"锐化值调整，数字越小锐化程度越小，数字越大锐化程度越大."},
-					unit:" LV",
-					min:0,
-					max:99,
-					step:1,
-					default:`$BB cat /sys/devices/virtual/panel/img_tune/sharpness`,
-					action:"sharpening_ctl /sys/devices/virtual/panel/img_tune/sharpness"
-			}},
 			{ STitleBar:{
 				title:{en:"wireless ADB", zh_CN:"无线ADB"},
 			}},
