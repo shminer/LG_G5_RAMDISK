@@ -188,11 +188,6 @@ echo "240 240 240" > /sys/devices/platform/kcal_ctrl.0/kcal
   echo "0" > /sys/module/msm_pm/parameters/debug_mask
 OPEN_RW;
 
-# disable lge triton service
-if [ -e /system/bin/triton ]; then
-	/system/bin/stop triton
-fi;
-
 if [ -e /root/rctd ]; then
 	rm /root/rctd
 fi;
@@ -262,6 +257,7 @@ echo "Boot initiated on $(date)" > /tmp/bootcheck;
 
 chmod +x /res/synapse/uci
 /res/synapse/uci
+ln -s /res/synapse/uci /sbin/uci
 
 echo "768" > /proc/sys/kernel/random/read_wakeup_threshold;
 echo "256" > /proc/sys/kernel/random/write_wakeup_threshold;

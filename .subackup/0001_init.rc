@@ -6,7 +6,6 @@
 
 #LGE - booting time reduction
 import /init.label.rc
-import init.supersu.rc
 
 import /init.environ.rc
 import /init.usb.rc
@@ -762,5 +761,3 @@ on property:ro.debuggable=1
 service flash_recovery /system/bin/install-recovery.sh
     class main
     oneshot
-# SuperSU:PATCH:282
-# SuperSU:STOCK:9ee9395b172a16be260c34d7f61818b9652b9ba3

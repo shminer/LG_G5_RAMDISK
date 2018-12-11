@@ -1,0 +1,7 @@
++ init.supersu.rc
++ sbin/fbe_bypass.sh
++ sbin/launch_daemonsu.sh
+* fstab.fota 0000_fstab.fota
+* init.rc 0001_init.rc
+* plat_property_contexts 0002_plat_property_contexts
+* sepolicy 0003_sepolicy

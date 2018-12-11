@@ -62,7 +62,7 @@ on post-fs
     start sreadahead
     # Support tuxera exfat filesystem
     #insmod /system/lib/modules/texfat.ko
-    insmod /system/lib/modules/exfat.ko
+    #insmod /system/lib/modules/exfat.ko
 # LGE_CHANGE_END
 
 on post-fs-data
