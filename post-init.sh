@@ -5,9 +5,6 @@ BB=/sbin/busybox;
 # Make tmp folder
 mkdir /tmp;
 
-chmod 755 /system/etc/init.d/*
-$BB run-parts /system/etc/init.d/
-
 CRITICAL_PERM_FIX()
 {
 	# critical Permissions fix
@@ -77,74 +74,22 @@ if [ "$?" == 0 ];then
 	wr_alu_cpufreq 2 pump_dec_step_at_min_freq 1
 	wr_alu_cpufreq 2 pump_dec_step 1
 fi
-
+echo "interactive" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+echo "interactive" > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
 # input boost 
 echo "0:960000 2:1036800" > /sys/module/cpu_boost/parameters/multi_boost_freq
 echo "0:960000 2:1036800" > /sys/module/cpu_boost/parameters/input_boost_freq
 echo 45 > /sys/module/cpu_boost/parameters/input_boost_ms
 # echo 1 > /sys/module/cpu_boost/parameters/sched_boost_on_input
 
+
+# thermal
+echo "1324800" > /sys/module/msm_thermal/parameters/c0_ioctl_user_max_freq_limit
+echo "1036800" > /sys/module/msm_thermal/parameters/c1_ioctl_user_max_freq_limit
+
 function write() {
    echo -n "$2" > "$1"
 }
-
-CREATE_CPUSETS() {
-	# Make sure CPUSET is set right
-    mkdir /dev/cpuset
-    mount cpuset none /dev/cpuset
-    mkdir /dev/cpuset/foreground
-    write /dev/cpuset/foreground/cpus 0
-    write /dev/cpuset/foreground/mems 0
-    mkdir /dev/cpuset/foreground/boost
-    write /dev/cpuset/foreground/boost/cpus 0
-    write /dev/cpuset/foreground/boost/mems 0
-    mkdir /dev/cpuset/background
-    write /dev/cpuset/background/cpus 0
-    write /dev/cpuset/background/mems 0	
-    # system-background is for system tasks that should only run on
-    # little cores, not on bigs
-    # to be used only by init, so don't change system-bg permissions
-    mkdir /dev/cpuset/system-background
-    write /dev/cpuset/system-background/cpus 0
-    write /dev/cpuset/system-background/mems 0
-    mkdir /dev/cpuset/top-app
-    write /dev/cpuset/top-app/cpus 0
-    write /dev/cpuset/top-app/mems 0	
-    # change permissions for all cpusets we'll touch at runtime
-    chown system system /dev/cpuset
-    chown system system /dev/cpuset/foreground
-    chown system system /dev/cpuset/foreground/boost
-    chown system system /dev/cpuset/background
-    chown system system /dev/cpuset/system-background
-    chown system system /dev/cpuset/top-app
-    chown system system /dev/cpuset/tasks
-    chown system system /dev/cpuset/foreground/tasks
-    chown system system /dev/cpuset/foreground/boost/tasks
-    chown system system /dev/cpuset/background/tasks
-    chown system system /dev/cpuset/system-background/tasks
-    chown system system /dev/cpuset/top-app/tasks	
-    # set system-background to 0775 so SurfaceFlinger can touch it
-    chmod 0775 /dev/cpuset/system-background
-    chmod 0664 /dev/cpuset/foreground/tasks
-    chmod 0664 /dev/cpuset/foreground/boost/tasks
-    chmod 0664 /dev/cpuset/background/tasks
-    chmod 0664 /dev/cpuset/system-background/tasks
-    chmod 0664 /dev/cpuset/top-app/tasks
-    chmod 0664 /dev/cpuset/tasks
-}
-CREATE_CPUSETS;
-
-SET_CPUSETS() {
-	# Update foreground and background cpusets
-	write /dev/cpuset/foreground/cpus 0-3
-	write /dev/cpuset/foreground/boost/cpus 0-3
-	write /dev/cpuset/background/cpus 0-1
-	write /dev/cpuset/camera-daemon/cpus 0-3
-	write /dev/cpuset/system-background/cpus 0-3
-	write /dev/cpuset/top-app/cpus 0-3
-	write /dev/cpuset/major/cpus 0-3
-}
-SET_CPUSETS;
 
 CPU_BUS_DCVS() {
 	# Enable bus-dcvs
@@ -171,6 +116,12 @@ CPU_BUS_DCVS;
 
 # KCAL for LG G5/V20 panel
 echo "240 240 240" > /sys/devices/platform/kcal_ctrl.0/kcal
+echo "258" > /sys/devices/platform/kcal_ctrl.0/kcal_val # for LG O-OS
+
+# for my earpod
+SC=/sys/class/misc/soundcontrol
+echo "4" > $SC/mic_boost
+echo "20" > $SC/volume_boost
 
 # disable debugging on some modules
   echo "N" > /sys/module/kernel/parameters/initcall_debug;
@@ -259,8 +210,11 @@ chmod +x /res/synapse/uci
 /res/synapse/uci
 ln -s /res/synapse/uci /sbin/uci
 
-echo "768" > /proc/sys/kernel/random/read_wakeup_threshold;
-echo "256" > /proc/sys/kernel/random/write_wakeup_threshold;
+#echo "768" > /proc/sys/kernel/random/read_wakeup_threshold;
+#echo "256" > /proc/sys/kernel/random/write_wakeup_threshold;
+
+chmod 755 /system/etc/init.d/*
+$BB run-parts /system/etc/init.d/
 
 exit;
 
