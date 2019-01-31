@@ -100,7 +100,7 @@ CPU_BUS_DCVS() {
 		write $cpubw/bw_hwmon/mbps_zones "1525 5195 11863 13763"
 		write $cpubw/bw_hwmon/sample_ms 4
 		write $cpubw/bw_hwmon/bw_step 190
-		write $cpubw/bw_hwmon/io_percent 30
+		write $cpubw/bw_hwmon/io_percent 29
 		write $cpubw/bw_hwmon/hist_memory 20
 		write $cpubw/bw_hwmon/hyst_length 10
 		write $cpubw/bw_hwmon/low_power_ceil_mbps 0
@@ -116,11 +116,11 @@ CPU_BUS_DCVS;
 
 # KCAL for LG G5/V20 panel
 echo "240 240 240" > /sys/devices/platform/kcal_ctrl.0/kcal
-echo "258" > /sys/devices/platform/kcal_ctrl.0/kcal_val # for LG O-OS
+echo "261" > /sys/devices/platform/kcal_ctrl.0/kcal_val # for LG O-OS
 
 # for my earpod
 SC=/sys/class/misc/soundcontrol
-echo "4" > $SC/mic_boost
+echo "0" > $SC/mic_boost
 echo "20" > $SC/volume_boost
 
 # disable debugging on some modules
